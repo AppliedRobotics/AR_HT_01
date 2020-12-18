@@ -12,13 +12,12 @@ msg = """
 Control robot
 ---------------------------
 Moving around:
-   q    w    e
+        w    
    a    s    d
         x
 
 w/x : increase/decrease linear X velocity 
 a/d : increase/decrease angular velocity 
-q/e : increase/decreace linear Y velocity
 space key, s : force stop
 
 CTRL-C to quit
