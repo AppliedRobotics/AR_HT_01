@@ -1,0 +1,45 @@
+<launch>
+  <node pkg="BFR_bringup" type="dif_control.py" name="motor_controller" output="screen"/>
+  <node pkg="BFR_bringup" type="wheel_odom.py" name="odom_node" output="screen"/>
+  <node pkg="rosserial_python" type="serial_node.py" name="serial_node" output="screen">
+    <param name="port" value="/dev/ttyACM0"/>
+    <param name="baud" value="115200"/>
+  </node>
+  aunch>
+  <node name="left_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="640" />
+    <param name="image_height" value="480" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="right_cam" />
+    <param name="io_method" value="mmap"/>
+  </node>
+  <node name="right_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/video2" />
+    <param name="image_width" value="640" />
+    <param name="image_height" value="480" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="left_cam" />
+    <param name="io_method" value="mmap"/>
+  </node>
+  <node pkg="hls_lfcd_lds_driver" type="hlds_laser_publisher" name="hlds_laser_publisher" output="screen">
+    <param name="port" value="/dev/ttyUSB1"/>
+    <param name="frame_id" value="laser"/>
+  	<remap from="scan" to="scan"/>
+  </node>
+
+<!--
+<node pkg="tc3-ros-package" type="camera.py" name="tc3_node_left" output="screen">
+    <param name="camera_ip" type="string" value="192.168.42.1"/>
+    <param name="camera_frame" type="string" value="tc_left"/>
+  </node>
+  <node pkg="tc3-ros-package" type="camera.py" name="tc3_node_back" output="screen">
+    <param name="camera_ip" type="string" value="192.168.43.1"/>
+    <param name="camera_frame" type="string" value="tc_back"/>
+  </node>
+<node pkg="tc3-ros-package" type="camera.py" name="tc3_node_right" output="screen">
+    <param name="camera_ip" type="string" value="192.168.44.1"/>
+    <param name="camera_frame" type="string" value="tc_right"/>
+  </node> -->
+
+</launch>
