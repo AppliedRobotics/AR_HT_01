@@ -24,6 +24,7 @@ setup(
         'console_scripts': [
             'dif_control = AR_HT_bringup.dif_control:main',
             'MotorControl = AR_HT_bringup.MotorControl:main',
+            'serial_connection = AR_HT_bringup.serial_script:main',
         ],
     },
 )

@@ -55,9 +55,9 @@ def sign(value):
 		return 1
 	else:
 		return -1
-def cb(msg):
+def cb(data):
 	global v_X_targ, w_Z_targ, control_timeout 
-	print(msg)
+	print(data)
 	if abs(data.linear.x) > 0.01 and abs(data.linear.x) < 0.09:
 		v_X_targ = sign(data.linear.x)*0.1
 	else:	
