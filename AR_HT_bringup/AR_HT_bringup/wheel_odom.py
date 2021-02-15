@@ -47,6 +47,38 @@ class WheelOdom(Node):
             transform_stamped_msg.transform.rotation.z = quaternion.z
             transform_stamped_msg.transform.rotation.w = quaternion.w
             self.odom_broadcaster.sendTransform(transform_stamped_msg)
+            quaternion.x = 0.0
+            quaternion.y = 0.0
+            quaternion.z = sin(0 / 2)
+            quaternion.w = cos(0 / 2)
+            transform_stamped_msg = TransformStamped()
+            transform_stamped_msg.header.stamp = now.to_msg()
+            transform_stamped_msg.header.frame_id = 'base_link'
+            transform_stamped_msg.child_frame_id = 'laser_hokuyo'
+            transform_stamped_msg.transform.translation.x = 0.25
+            transform_stamped_msg.transform.translation.y = 0.0
+            transform_stamped_msg.transform.translation.z = 0.4
+            transform_stamped_msg.transform.rotation.x = quaternion.x
+            transform_stamped_msg.transform.rotation.y = quaternion.y
+            transform_stamped_msg.transform.rotation.z = quaternion.z
+            transform_stamped_msg.transform.rotation.w = quaternion.w
+            self.odom_broadcaster.sendTransform(transform_stamped_msg)
+            quaternion.x = 0.0
+            quaternion.y = 0.0
+            quaternion.z = sin(0 / 2)
+            quaternion.w = cos(0 / 2)
+            transform_stamped_msg = TransformStamped()
+            transform_stamped_msg.header.stamp = now.to_msg()
+            transform_stamped_msg.header.frame_id = 'base_link'
+            transform_stamped_msg.child_frame_id = 'laser_hls'
+            transform_stamped_msg.transform.translation.x = -0.25
+            transform_stamped_msg.transform.translation.y = 0.0
+            transform_stamped_msg.transform.translation.z = 0.4
+            transform_stamped_msg.transform.rotation.x = quaternion.x
+            transform_stamped_msg.transform.rotation.y = quaternion.y
+            transform_stamped_msg.transform.rotation.z = quaternion.z
+            transform_stamped_msg.transform.rotation.w = quaternion.w
+            self.odom_broadcaster.sendTransform(transform_stamped_msg)
             odom = Odometry()
             odom.header.stamp = now.to_msg()
             odom.header.frame_id = 'odom'
