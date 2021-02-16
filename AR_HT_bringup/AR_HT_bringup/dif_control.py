@@ -20,7 +20,7 @@ class DifControl(Node):
 		param = self.declare_parameter('usb', '/dev/ttyUSB0')
 		if self.get_parameter('usb').get_parameter_value().string_value is not None:
 			param = self.get_parameter('usb').get_parameter_value().string_value
-			print(param)
+			print('connected to:'+param)
 		else:
 			param = '/dev/ttyUSB0'
 		self.sub = self.create_subscription(Twist, 'cmd_vel', self.cmd_cb, 10)

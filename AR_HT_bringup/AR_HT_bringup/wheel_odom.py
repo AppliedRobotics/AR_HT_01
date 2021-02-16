@@ -22,6 +22,7 @@ class WheelOdom(Node):
         self.xold = 0
         self.yold = 0
         self.timeold = self.get_clock().now().nanoseconds
+        print('odometry initialized')
     def js_cb(self, data):
         now = self.get_clock().now()
         time = now.nanoseconds
