@@ -7,6 +7,7 @@ from tf2_ros import TransformBroadcaster
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import TransformStamped
 from geometry_msgs.msg import Quaternion
+
 class WheelOdom(Node):
     def __init__(self):
         super().__init__('wheel_odom')
@@ -86,11 +87,17 @@ class WheelOdom(Node):
             odom.pose.pose.position.x = self.x
             odom.pose.pose.position.y = self.y
             odom.pose.pose.position.z = 0.0
+            odom.pose.covariance[0] = 0.1
+            odom.pose.covariance[7] = 0.1
+            odom.pose.covariance[35] = 0.1
             odom.pose.pose.orientation = quaternion
             odom.child_frame_id = 'base_link'
             odom.twist.twist.linear.x = Vx
             odom.twist.twist.linear.y = 0.0
             odom.twist.twist.angular.z = Vtheta
+            odom.twist.covariance[0] = 0.01
+            odom.twist.covariance[7] = 0.01
+            odom.twist.covariance[35] = 0.01
             self.odom_pub.publish(odom)
            
 
@@ -102,7 +109,7 @@ class WheelOdom(Node):
         
         Vy = 0
         # New theta for caclulationg rotation matrix:
-        Vtheta = -(self.WHEELRADIUS)*(Rvel-Lvel)/self.BASELINE
+        Vtheta = -2*(self.WHEELRADIUS)*(Rvel-Lvel)/self.BASELINE
         # Rotation matrix
         self.theta += delta * Vtheta
         self.y += delta * sin(self.theta)*Vx

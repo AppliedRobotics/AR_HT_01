@@ -29,7 +29,7 @@ class DifControl(Node):
 		self.motor_r = MotorControl(0, self.ser)
 		self.motor_l = MotorControl(1, self.ser)
 		self.control_timeout = time()
-		self.init_motors(3, 16, 16)
+		self.init_motors(4, 16, 16)
 		self.v_X_targ = 0
 		self.w_Z_targ = 0
 		self.msg = JointState()
@@ -40,13 +40,13 @@ class DifControl(Node):
 		self.create_timer(0.05, self.timer_callback)
 	def cmd_cb(self, data):
 		if abs(data.linear.x) > 0.01 and abs(data.linear.x) < 0.09:
-			self.v_X_targ = self.sign(data.linear.x)*0.1
+			self.v_X_targ = self.sign(data.linear.x)*0.1/2
 		else:	
-			self.v_X_targ = data.linear.x
+			self.v_X_targ = data.linear.x/2
 		if abs(data.angular.z) > 0.01 and abs(data.angular.z) < 0.1:
-			self.w_Z_targ = self.sign(data.angular.z)*0.1
+			self.w_Z_targ = self.sign(data.angular.z)*0.1/2
 		else:	
-			self.w_Z_targ = data.angular.z
+			self.w_Z_targ = data.angular.z/2
 		self.control_timeout = time()
 	def timer_callback(self):
 		if(float(time()) - self.control_timeout < 1.5): 
@@ -75,7 +75,7 @@ class DifControl(Node):
 			v_l = -self.motor_l.motor_speed 
 		else:
 			v_l = self.motor_l.motor_speed
-		return v_r, v_l
+		return v_r*2, v_l*2
 	def init_motors(self, holl, acc, br):
 		self.motor_r.holl_impulse(holl)
 		self.motor_r.sef_acceleration(acc)

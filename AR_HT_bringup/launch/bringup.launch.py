@@ -8,8 +8,8 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    remappings_hls = [('/scan', '/scan_hls'),]
-    remappings_hokuyo = [('/scan', '/scan_hokuyo')]
+    remappings_hls = [('/scan', '/scan_2'),]
+    remappings_hokuyo = [('/scan', '/scan_1')]
     package_dir = get_package_share_directory('AR_HT_bringup')
     config = os.path.join(
         package_dir,
