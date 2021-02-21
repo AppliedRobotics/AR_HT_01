@@ -13,7 +13,7 @@ class WheelOdom(Node):
         super().__init__('wheel_odom')
         self.sub = self.create_subscription(
             JointState, 'joint_states', self.js_cb, 10)
-        self.odom_pub = self.create_publisher(Odometry, "odom", 10)
+        self.odom_pub = self.create_publisher(Odometry, "odom_dirty", 10)
         self.odom_broadcaster = TransformBroadcaster(self)
         self.BASELINE = 0.5081
         self.WHEELRADIUS = 0.115
@@ -37,22 +37,22 @@ class WheelOdom(Node):
             quaternion.y = 0.0
             quaternion.z = sin(self.theta / 2)
             quaternion.w = cos(self.theta / 2)
-            transform_stamped_msg = TransformStamped()
-            transform_stamped_msg.header.stamp = now.to_msg()
-            transform_stamped_msg.header.frame_id = 'odom'
-            transform_stamped_msg.child_frame_id = 'base_link'
-            transform_stamped_msg.transform.translation.x = self.x
-            transform_stamped_msg.transform.translation.y = self.y
-            transform_stamped_msg.transform.translation.z = 0.0
-            transform_stamped_msg.transform.rotation.x = quaternion.x
-            transform_stamped_msg.transform.rotation.y = quaternion.y
-            transform_stamped_msg.transform.rotation.z = quaternion.z
-            transform_stamped_msg.transform.rotation.w = quaternion.w
-            self.odom_broadcaster.sendTransform(transform_stamped_msg)
+            # transform_stamped_msg = TransformStamped()
+            # transform_stamped_msg.header.stamp = now.to_msg()
+            # transform_stamped_msg.header.frame_id = 'odom'
+            # transform_stamped_msg.child_frame_id = 'base_link'
+            # transform_stamped_msg.transform.translation.x = self.x
+            # transform_stamped_msg.transform.translation.y = self.y
+            # transform_stamped_msg.transform.translation.z = 0.0
+            # transform_stamped_msg.transform.rotation.x = quaternion.x
+            # transform_stamped_msg.transform.rotation.y = quaternion.y
+            # transform_stamped_msg.transform.rotation.z = quaternion.z
+            # transform_stamped_msg.transform.rotation.w = quaternion.w
+            # self.odom_broadcaster.sendTransform(transform_stamped_msg)
             quaternion.x = 0.0
             quaternion.y = 0.0
-            quaternion.z = sin(0 / 2)
-            quaternion.w = cos(0 / 2)
+            quaternion.z = 0.0
+            quaternion.w = 1.0
             transform_stamped_msg = TransformStamped()
             transform_stamped_msg.header.stamp = now.to_msg()
             transform_stamped_msg.header.frame_id = 'base_link'
@@ -67,8 +67,8 @@ class WheelOdom(Node):
             self.odom_broadcaster.sendTransform(transform_stamped_msg)
             quaternion.x = 0.0
             quaternion.y = 0.0
-            quaternion.z = sin(0 / 2)
-            quaternion.w = cos(0 / 2)
+            quaternion.z = 0.0
+            quaternion.w = 1.0
             transform_stamped_msg = TransformStamped()
             transform_stamped_msg.header.stamp = now.to_msg()
             transform_stamped_msg.header.frame_id = 'base_link'
@@ -81,12 +81,16 @@ class WheelOdom(Node):
             transform_stamped_msg.transform.rotation.z = quaternion.z
             transform_stamped_msg.transform.rotation.w = quaternion.w
             self.odom_broadcaster.sendTransform(transform_stamped_msg)
+            quaternion.x = 0.0
+            quaternion.y = 0.0
+            quaternion.z = sin(self.theta / 2)
+            quaternion.w = cos(self.theta / 2)
             odom = Odometry()
             odom.header.stamp = now.to_msg()
             odom.header.frame_id = 'odom'
             odom.pose.pose.position.x = self.x
             odom.pose.pose.position.y = self.y
-            odom.pose.pose.position.z = 0.0
+            odom.pose.pose.position.z = self.theta
             odom.pose.covariance[0] = 0.1
             odom.pose.covariance[7] = 0.1
             odom.pose.covariance[35] = 0.1

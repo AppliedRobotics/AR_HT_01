@@ -49,6 +49,13 @@ def generate_launch_description():
             output='screen',
             emulate_tty=True,
         ),
+         Node(
+            package='AR_HT_bringup',
+            executable='ekf',
+            name='ekf_node',
+            output='screen',
+            emulate_tty=True,
+        ),  
     ])
     # return LaunchDescription([
     #     Node(

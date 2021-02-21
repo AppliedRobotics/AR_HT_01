@@ -13,9 +13,9 @@ else:
     import termios
     import tty
 
-MAX_LIN_VEL = 0.22
+MAX_LIN_VEL = 0.4
 MAX_ANG_VEL = 2.84
-LIN_VEL_STEP_SIZE = 0.01
+LIN_VEL_STEP_SIZE = 0.05
 ANG_VEL_STEP_SIZE = 0.1
 
 

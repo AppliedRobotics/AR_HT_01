@@ -49,11 +49,16 @@ class DifControl(Node):
 			self.w_Z_targ = data.angular.z/2
 		self.control_timeout = time()
 	def timer_callback(self):
+		v_r, v_l = self.get_motors_speed()
 		if(float(time()) - self.control_timeout < 1.5): 
 			self.set_speed(self.v_X_targ, self.w_Z_targ)
+			if self.v_X_targ == 0.0 and self.w_Z_targ == 0.0:
+				v_l = 0.0
+				v_r = 0.0
 		else:
+			v_r = 0.0
+			v_l = 0.0
 			self.set_speed(0, 0)
-		v_r, v_l = self.get_motors_speed()
 		self.msg.velocity[0] = v_r
 		self.msg.velocity[1] = v_l
 		self.joints_states_pub.publish(self.msg)
