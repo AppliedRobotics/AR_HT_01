@@ -13,11 +13,7 @@ slam_toolbox:
     odom_frame: odom
     map_frame: map
     base_frame: base_link
-<<<<<<< HEAD
     scan_topic: /scan_1
-=======
-    scan_topic: /scan_hokuyo
->>>>>>> a8a643250cf6455333a7107086397fce5224ad52
     mode: mapping #localization
 
     # if you'd like to immediately start continuing a map at a given pose
@@ -29,15 +25,9 @@ slam_toolbox:
 
     debug_logging: false
     throttle_scans: 1
-<<<<<<< HEAD
     transform_publish_period: 0.2 #if 0 never publishes odometry
     map_update_interval: 1.0
     resolution: 0.05
-=======
-    transform_publish_period: 0.02 #if 0 never publishes odometry
-    map_update_interval: 0.1
-    resolution: 0.03
->>>>>>> a8a643250cf6455333a7107086397fce5224ad52
     max_laser_range: 5.0 #for rastering images
     minimum_time_interval: 0.01
     transform_timeout: 0.2
@@ -49,7 +39,6 @@ slam_toolbox:
     use_scan_matching: true
     use_scan_barycenter: true
     minimum_travel_distance: 0.01
-<<<<<<< HEAD
     minimum_travel_heading: 0.5
     scan_buffer_size: 1000
     scan_buffer_maximum_scan_distance: 5.0
@@ -64,29 +53,12 @@ slam_toolbox:
 
     # Correlation Parameters - Correlation Parameters
     correlation_search_space_dimension: 5.5
-=======
-    minimum_travel_heading: 0.01
-    scan_buffer_size: 5
-    scan_buffer_maximum_scan_distance: 5.0
-    link_match_minimum_response_fine: 0.2  
-    link_scan_maximum_distance: 5.5
-    loop_search_maximum_distance: 5.0
-    do_loop_closing: true 
-    loop_match_minimum_chain_size: 1           
-    loop_match_maximum_variance_coarse: 8.0  
-    loop_match_minimum_response_coarse: 0.15    
-    loop_match_minimum_response_fine: 0.15
-
-    # Correlation Parameters - Correlation Parameters
-    correlation_search_space_dimension: 1.5
->>>>>>> a8a643250cf6455333a7107086397fce5224ad52
     correlation_search_space_resolution: 0.01
     correlation_search_space_smear_deviation: 0.1 
 
     # Correlation Parameters - Loop Closure Parameters
     loop_search_space_dimension: 8.0
     loop_search_space_resolution: 0.03
-<<<<<<< HEAD
     loop_search_space_smear_deviation: 0.1
 
     # Scan Matcher Parameters
@@ -98,17 +70,4 @@ slam_toolbox:
     coarse_angle_resolution: 0.01        
     minimum_angle_penalty: 0.01
     minimum_distance_penalty: 0.01
-=======
-    loop_search_space_smear_deviation: 0.03
-
-    # Scan Matcher Parameters
-    distance_variance_penalty: 0.5      
-    angle_variance_penalty: 0.01
-
-    fine_search_angle_offset: 0.00349     
-    coarse_search_angle_offset: 1.5   
-    coarse_angle_resolution: 0.0349        
-    minimum_angle_penalty: 0.9
-    minimum_distance_penalty: 0.5
->>>>>>> a8a643250cf6455333a7107086397fce5224ad52
     use_response_expansion: true

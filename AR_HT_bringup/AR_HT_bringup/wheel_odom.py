@@ -15,11 +15,7 @@ class WheelOdom(Node):
             JointState, 'joint_states', self.js_cb, 10)
         self.odom_pub = self.create_publisher(Odometry, "odom_dirty", 10)
         self.odom_broadcaster = TransformBroadcaster(self)
-<<<<<<< HEAD
         self.BASELINE = 0.430
-=======
-        self.BASELINE = 0.5081
->>>>>>> a8a643250cf6455333a7107086397fce5224ad52
         self.WHEELRADIUS = 0.115
         self.x = 0
         self.y = 0
@@ -61,11 +57,7 @@ class WheelOdom(Node):
             transform_stamped_msg.header.stamp = now.to_msg()
             transform_stamped_msg.header.frame_id = 'base_link'
             transform_stamped_msg.child_frame_id = 'laser_hokuyo'
-<<<<<<< HEAD
             transform_stamped_msg.transform.translation.x = 0.150
-=======
-            transform_stamped_msg.transform.translation.x = 0.25
->>>>>>> a8a643250cf6455333a7107086397fce5224ad52
             transform_stamped_msg.transform.translation.y = 0.0
             transform_stamped_msg.transform.translation.z = 0.4
             transform_stamped_msg.transform.rotation.x = quaternion.x
@@ -81,11 +73,7 @@ class WheelOdom(Node):
             transform_stamped_msg.header.stamp = now.to_msg()
             transform_stamped_msg.header.frame_id = 'base_link'
             transform_stamped_msg.child_frame_id = 'laser_hls'
-<<<<<<< HEAD
             transform_stamped_msg.transform.translation.x = -0.350
-=======
-            transform_stamped_msg.transform.translation.x = -0.25
->>>>>>> a8a643250cf6455333a7107086397fce5224ad52
             transform_stamped_msg.transform.translation.y = 0.0
             transform_stamped_msg.transform.translation.z = 0.4
             transform_stamped_msg.transform.rotation.x = quaternion.x
@@ -125,11 +113,7 @@ class WheelOdom(Node):
         
         Vy = 0
         # New theta for caclulationg rotation matrix:
-<<<<<<< HEAD
         Vtheta = -1.6*(self.WHEELRADIUS)*(Rvel-Lvel)/self.BASELINE
-=======
-        Vtheta = -2*(self.WHEELRADIUS)*(Rvel-Lvel)/self.BASELINE
->>>>>>> a8a643250cf6455333a7107086397fce5224ad52
         # Rotation matrix
         self.theta += delta * Vtheta
         self.y += delta * sin(self.theta)*Vx

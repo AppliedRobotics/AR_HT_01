@@ -16,11 +16,7 @@ class DifControl(Node):
 	def __init__(self):	
 		super().__init__('dif_control')
 		self.R = 0.115
-<<<<<<< HEAD
 		self.l = 0.430
-=======
-		self.l = 0.5081
->>>>>>> a8a643250cf6455333a7107086397fce5224ad52
 		param = self.declare_parameter('usb', '/dev/ttyUSB0')
 		if self.get_parameter('usb').get_parameter_value().string_value is not None:
 			param = self.get_parameter('usb').get_parameter_value().string_value
@@ -55,30 +51,18 @@ class DifControl(Node):
 	def timer_callback(self):
 		v_r, v_l = self.get_motors_speed()
 		if(float(time()) - self.control_timeout < 1.5): 
-<<<<<<< HEAD
 			self.set_speed(self.v_X_targ, self.w_Z_targ, v_r, v_l)
-=======
-			self.set_speed(self.v_X_targ, self.w_Z_targ)
->>>>>>> a8a643250cf6455333a7107086397fce5224ad52
 			if self.v_X_targ == 0.0 and self.w_Z_targ == 0.0:
 				v_l = 0.0
 				v_r = 0.0
 		else:
 			v_r = 0.0
 			v_l = 0.0
-<<<<<<< HEAD
 			self.set_speed(0, 0, v_r, v_l)
 		self.msg.velocity[0] = v_r
 		self.msg.velocity[1] = v_l
 		self.joints_states_pub.publish(self.msg)
 	def set_speed(self, vX, wZ, r_v_r, r_v_l): #meteres per second / radians per second
-=======
-			self.set_speed(0, 0)
-		self.msg.velocity[0] = v_r
-		self.msg.velocity[1] = v_l
-		self.joints_states_pub.publish(self.msg)
-	def set_speed(self, vX, wZ): #meteres per second / radians per second
->>>>>>> a8a643250cf6455333a7107086397fce5224ad52
 		v_r = (2*vX - self.l*wZ)/(2*self.R)
 		v_l = -1*(2*vX + self.l*wZ)/(2*self.R)
 		if wZ < 0.32 and abs(vX) < 0.01 and wZ > 0:
