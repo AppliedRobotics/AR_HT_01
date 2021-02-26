@@ -34,10 +34,17 @@ def generate_launch_description():
 
     start_sync_slam_toolbox_node = Node(
         parameters=[
+<<<<<<< HEAD
+            os.path.join(bringup_dir, 'params', 'online_async.yaml')
+        ],
+        package='slam_toolbox',
+        executable='async_slam_toolbox_node',
+=======
             os.path.join(bringup_dir, 'params', 'online_sync.yaml')
         ],
         package='slam_toolbox',
         executable='sync_slam_toolbox_node',
+>>>>>>> a8a643250cf6455333a7107086397fce5224ad52
         name='slam_toolbox',
         output='screen')
 
