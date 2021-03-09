@@ -120,9 +120,11 @@ class EKF(Node):
         odom.pose.pose.position.z = 0.0
         odom.pose.pose.orientation = quaternion
         odom.child_frame_id = 'base_link'
-        odom.twist.twist.linear.x = optimal_state_estimate_k[3]
+        # odom.twist.twist.linear.x = optimal_state_estimate_k[3]
+        odom.twist.twist.linear.x = 0.0
         odom.twist.twist.linear.y = 0.0
-        odom.twist.twist.angular.z = optimal_state_estimate_k[4]
+        # odom.twist.twist.angular.z = optimal_state_estimate_k[4]
+        odom.twist.twist.angular.z = 0.0
         self.odom_pub.publish(odom)
         # print(optimal_state_estimate_k)
     def getB(self, yaw, deltat):

@@ -15,6 +15,7 @@ setup(
         (os.path.join('share', package_name, 'params'), glob('params/*.yaml')),
         (os.path.join('share', package_name, 'map'), glob('map/*.yaml')),
         (os.path.join('share', package_name, 'map'), glob('map/*.pgm')),
+        (os.path.join('share', package_name, 'behaivor_trees'), glob('behaivor_trees/*.xml')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -25,6 +26,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+        'action = AR_HT_navigation.action:main',
         ],
     },
 )
