@@ -1,9 +1,9 @@
 urg_node:
   ros__parameters:
-    angle_max: 3.14
-    angle_min: -3.14
+    angle_max: 2.0
+    angle_min: -2.0
     ip_port: 10940
-    serial_port: "/dev/ttyACM0"
+    serial_port: "/dev/ttyACM1"
     serial_baud: 115200
     laser_frame_id: "laser_hokuyo"
     calibrate_time: false

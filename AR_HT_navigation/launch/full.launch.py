@@ -13,7 +13,7 @@ def generate_launch_description():
     # Get the launch directory
     bringup_dir = get_package_share_directory('AR_HT_navigation')
     launch_dir = os.path.join(bringup_dir, 'launch')
-
+    costmap_filters_demo_dir = get_package_share_directory('AR_HT_navigation')
     # Create the launch configuration variables
     namespace = LaunchConfiguration('namespace')
     use_namespace = LaunchConfiguration('use_namespace')
@@ -44,7 +44,7 @@ def generate_launch_description():
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value=os.path.join(bringup_dir, 'map', 'office.yaml'),
+        default_value="/home/nuc/AR_HT/src/web_robot_control_flask/flask_module/static/map/map.yaml",
         description='Full path to map yaml file to load')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
@@ -92,7 +92,6 @@ def generate_launch_description():
                               'autostart': autostart,
                               'params_file': params_file,
                               'use_lifecycle_mgr': 'false'}.items()),
-
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(bringup_dir, 'navigation.launch.py')),
             launch_arguments={'namespace': namespace,
@@ -102,6 +101,16 @@ def generate_launch_description():
                               'default_bt_xml_filename': default_bt_xml_filename,
                               'use_lifecycle_mgr': 'false',
                               'map_subscribe_transient_local': 'true'}.items()),
+         IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(os.path.join(bringup_dir,
+                                                       'costmap_filter.launch.py')),
+            condition=IfCondition(PythonExpression(['not ', slam])),
+            launch_arguments={'namespace': namespace,
+                              'mask': "/home/nuc/AR_HT/src/web_robot_control_flask/flask_module/static/map/map_filter.yaml",
+                              'use_sim_time': use_sim_time,
+                              'autostart': autostart,
+                              'params_file': os.path.join(costmap_filters_demo_dir, 'params', 'keepout_params.yaml')
+                              }.items()),
     ])
 
     # Create the launch description and populate

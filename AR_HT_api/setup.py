@@ -1,7 +1,7 @@
 from setuptools import setup
 import os
 from glob import glob
-package_name = 'AR_HT_bringup'
+package_name = 'AR_HT_api'
 
 setup(
     name=package_name,
@@ -12,7 +12,10 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name), glob('launch/*.launch.py')),
-        (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
+        (os.path.join('share', package_name, 'params'), glob('params/*.yaml')),
+        (os.path.join('share', package_name, 'map'), glob('map/*.yaml')),
+        (os.path.join('share', package_name, 'map'), glob('map/*.pgm')),
+        (os.path.join('share', package_name, 'behaivor_trees'), glob('behaivor_trees/*.xml')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -23,12 +26,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'dif_control = AR_HT_bringup.dif_control:main',
-            'MotorControl = AR_HT_bringup.MotorControl:main',
-            'serial_connection = AR_HT_bringup.serial_script:main',
-            'odom = AR_HT_bringup.wheel_odom:main',
-            'ekf = AR_HT_bringup.ekf:main',
-            'fixer = AR_HT_bringup.scan_fixer:main',
+        'api = AR_HT_api.ar_api:main',
         ],
     },
 )

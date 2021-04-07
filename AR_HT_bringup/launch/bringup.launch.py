@@ -8,7 +8,7 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    remappings_hls = [('/scan', '/scan_2'),]
+    remappings_hls = [('/scan', '/scan_2_wr'),]
     remappings_hokuyo = [('/scan', '/scan_1')]
     package_dir = get_package_share_directory('AR_HT_bringup')
     config = os.path.join(
@@ -44,15 +44,32 @@ def generate_launch_description():
         ),
         Node(
             package='AR_HT_bringup',
+            executable='serial_connection',
+            name='opencr_node',
+            output='screen',
+            emulate_tty=True,
+            parameters=[
+                {'usb': '/dev/ttyACM0'}
+            ]
+        ),
+        Node(
+            package='AR_HT_bringup',
             executable='odom',
             name='odom_node',
             output='screen',
             emulate_tty=True,
         ),
-         Node(
+        Node(
             package='AR_HT_bringup',
             executable='ekf',
             name='ekf_node',
+            output='screen',
+            emulate_tty=True,
+        ),  
+        Node(
+            package='AR_HT_bringup',
+            executable='fixer',
+            name='scan_fixer',
             output='screen',
             emulate_tty=True,
         ),  
