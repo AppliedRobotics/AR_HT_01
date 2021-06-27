@@ -13,7 +13,7 @@ class WheelOdom(Node):
         super().__init__('wheel_odom')
         self.sub = self.create_subscription(
             JointState, 'joint_states', self.js_cb, 10)
-        self.odom_pub = self.create_publisher(Odometry, "odom_dirty", 10)
+        self.odom_pub = self.create_publisher(Odometry, "odom", 10)
         self.odom_broadcaster = TransformBroadcaster(self)
         self.RADIUS = 0.2
         L1 = 0.3
