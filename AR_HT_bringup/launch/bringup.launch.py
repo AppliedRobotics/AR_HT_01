@@ -34,8 +34,8 @@ def generate_launch_description():
             ),
         Node(
             package='AR_HT_bringup',
-            executable='dif_control',
-            name='dif_control_node',
+            executable='omni_control',
+            name='omni_control_node',
             output='screen',
             emulate_tty=True,
             parameters=[
