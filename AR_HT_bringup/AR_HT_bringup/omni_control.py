@@ -14,9 +14,9 @@ import threading
 class DifControl(Node):
 	def __init__(self):	
 		super().__init__('dif_control')
-		self.R = 0.2
-		L1 = 0.4
-		L2 = 0.3
+		self.R = 0.0771
+		L1 = 0.5172
+		L2 = 0.49
 		self.wheel_sep = (L1+L2)/2
 		self.motors = MotorControl()
 		self.sub = self.create_subscription(Twist, 'cmd_vel', self.cmd_cb, 2)
@@ -24,6 +24,7 @@ class DifControl(Node):
 		self.control_timeout = time()
 		self.v_X_targ = 0
 		self.v_Y_targ = 0
+		self.k = 0.39
 		self.w_Z_targ = 0
 		self.msg = JointState()
 		self.msg.name.append("left_front")
@@ -53,10 +54,10 @@ class DifControl(Node):
 		self.msg.velocity[3] = v_rb
 		self.joints_states_pub.publish(self.msg)
 	def set_speed(self, vX, vY, wZ): #meteres per second / radians per second
-		v_lf = (1 / self.R * (vX + vY - self.wheel_sep * (wZ) ) * (-1))/0.159154943
-		v_rf = (1 / self.R * (vX - vY + self.wheel_sep * (wZ) ) * (1))/0.159154943
-		v_lb = (1 / self.R * (- vX + vY + self.wheel_sep * (wZ) ) * (1))/0.159154943
-		v_rb = (1 / self.R * (- vX - vY - self.wheel_sep * (wZ) ) * (-1))/0.159154943
+		v_lf = (1 / self.R * (vX + vY - self.wheel_sep * (wZ) ) * (-1))/self.k
+		v_rf = (1 / self.R * (vX - vY + self.wheel_sep * (wZ) ) * (1))/self.k
+		v_lb = (1 / self.R * (- vX + vY + self.wheel_sep * (wZ) ) * (1))/self.k
+		v_rb = (1 / self.R * (- vX - vY - self.wheel_sep * (wZ) ) * (-1))/self.k
 		
 		self.motors.goal_velocity('lf', v_lf)
 		self.motors.goal_velocity('rf', v_rf)

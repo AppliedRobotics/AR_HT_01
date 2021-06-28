@@ -3,6 +3,7 @@ from math import pi, sin, cos
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
+import tf2_py
 from tf2_ros import TransformBroadcaster
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import TransformStamped
@@ -15,9 +16,11 @@ class WheelOdom(Node):
             JointState, 'joint_states', self.js_cb, 10)
         self.odom_pub = self.create_publisher(Odometry, "odom", 10)
         self.odom_broadcaster = TransformBroadcaster(self)
-        self.RADIUS = 0.2
-        L1 = 0.3
-        L2 = 0.4
+        self.RADIUS = 0.0771
+        self.k = 0.39
+        self.kw = 0.39
+        L1 = 0.5172
+        L2 = 0.49
         self.WHEEL_SEPARATION = (L1 + L2)/2
         self.x = 0
         self.y = 0
@@ -51,22 +54,59 @@ class WheelOdom(Node):
             transform_stamped_msg.transform.rotation.z = quaternion.z
             transform_stamped_msg.transform.rotation.w = quaternion.w
             self.odom_broadcaster.sendTransform(transform_stamped_msg)
-            # quaternion.x = 0.0
-            # quaternion.y = 0.0
-            # quaternion.z = 0.0
-            # quaternion.w = 1.0
-            # transform_stamped_msg = TransformStamped()
-            # transform_stamped_msg.header.stamp = now.to_msg()
-            # transform_stamped_msg.header.frame_id = 'base_link'
-            # transform_stamped_msg.child_frame_id = 'laser_hokuyo'
-            # transform_stamped_msg.transform.translation.x = 0.150
-            # transform_stamped_msg.transform.translation.y = 0.0
-            # transform_stamped_msg.transform.translation.z = 0.4
-            # transform_stamped_msg.transform.rotation.x = quaternion.x
-            # transform_stamped_msg.transform.rotation.y = quaternion.y
-            # transform_stamped_msg.transform.rotation.z = quaternion.z
-            # transform_stamped_msg.transform.rotation.w = quaternion.w
-            # self.odom_broadcaster.sendTransform(transform_stamped_msg)
+            q = self.quaternion_from_euler(pi,0.0,0.35)
+            quaternion.x = q[1]
+            quaternion.y = q[2]
+            quaternion.z = q[3]
+            quaternion.w = q[0]
+            
+            transform_stamped_msg = TransformStamped()
+            transform_stamped_msg.header.stamp = now.to_msg()
+            transform_stamped_msg.header.frame_id = 'base_link'
+            transform_stamped_msg.child_frame_id = 'scan_right'
+            transform_stamped_msg.transform.translation.x = -0.326155
+            transform_stamped_msg.transform.translation.y = -0.2425
+            transform_stamped_msg.transform.translation.z = 0.4
+            transform_stamped_msg.transform.rotation.x = quaternion.x
+            transform_stamped_msg.transform.rotation.y = quaternion.y
+            transform_stamped_msg.transform.rotation.z = quaternion.z
+            transform_stamped_msg.transform.rotation.w = quaternion.w
+            self.odom_broadcaster.sendTransform(transform_stamped_msg)
+            q = self.quaternion_from_euler(pi,0.0, -0.35)
+            quaternion.x = q[1]
+            quaternion.y = q[2]
+            quaternion.z = q[3]
+            quaternion.w = q[0]
+            
+            transform_stamped_msg = TransformStamped()
+            transform_stamped_msg.header.stamp = now.to_msg()
+            transform_stamped_msg.header.frame_id = 'base_link'
+            transform_stamped_msg.child_frame_id = 'scan_left'
+            transform_stamped_msg.transform.translation.x = -0.326155
+            transform_stamped_msg.transform.translation.y = 0.2425
+            transform_stamped_msg.transform.translation.z = 0.4
+            transform_stamped_msg.transform.rotation.x = quaternion.x
+            transform_stamped_msg.transform.rotation.y = quaternion.y
+            transform_stamped_msg.transform.rotation.z = quaternion.z
+            transform_stamped_msg.transform.rotation.w = quaternion.w
+            self.odom_broadcaster.sendTransform(transform_stamped_msg)
+            q = self.quaternion_from_euler(0.0,0.0, pi)
+            quaternion.x = q[1]
+            quaternion.y = q[2]
+            quaternion.z = q[3]
+            quaternion.w = q[0]
+            transform_stamped_msg = TransformStamped()
+            transform_stamped_msg.header.stamp = now.to_msg()
+            transform_stamped_msg.header.frame_id = 'base_link'
+            transform_stamped_msg.child_frame_id = 'scan_front'
+            transform_stamped_msg.transform.translation.x = 0.285
+            transform_stamped_msg.transform.translation.y = 0.0
+            transform_stamped_msg.transform.translation.z = 0.4
+            transform_stamped_msg.transform.rotation.x = quaternion.x
+            transform_stamped_msg.transform.rotation.y = quaternion.y
+            transform_stamped_msg.transform.rotation.z = quaternion.z
+            transform_stamped_msg.transform.rotation.w = quaternion.w
+            self.odom_broadcaster.sendTransform(transform_stamped_msg)
             # quaternion.x = 0.0
             # quaternion.y = 0.0
             # quaternion.z = 0.0
@@ -114,9 +154,9 @@ class WheelOdom(Node):
         # Vy=(-vel0-vel2+vel3+vel1)*(R/4)
         # Vtheta=(-vel0+vel2-vel3+vel1)*(R/(4*wheel_separation))
         
-        Vx = (v_lf + v_rf + v_lb + v_rb) * (self.RADIUS/4) * 0.159154943
-        Vy = (-v_lf + v_rf + v_lb - v_rb) * (self.RADIUS/4) * 0.159154943
-        Vtheta = (-v_lf + v_rf - v_lb + v_rb) * (self.RADIUS/(4*self.WHEEL_SEPARATION)) * 0.159154943
+        Vx = (v_lf + v_rf + v_lb + v_rb) * (self.RADIUS/4) * self.k
+        Vy = (-v_lf + v_rf + v_lb - v_rb) * (self.RADIUS/4) * self.k
+        Vtheta = (-v_lf + v_rf - v_lb + v_rb) * (self.RADIUS/(4*self.WHEEL_SEPARATION)) * self.kw
         # Vtheta = 0.0
         # print(round(Vx,3), round(Vy,3), round(Vtheta,3))
         # print(v_lf-v_rf, v_lb-v_rb)
@@ -126,7 +166,20 @@ class WheelOdom(Node):
         self.y += delta * (sin(self.theta)*Vx + cos(self.theta)*Vy)
         self.x += delta * (cos(self.theta)*Vx - sin(self.theta)*Vy)
         return Vx, Vy, Vtheta
+    def quaternion_from_euler(self, roll, pitch, yaw):    
+        cy = cos(yaw * 0.5)
+        sy = sin(yaw * 0.5)
+        cp = cos(pitch * 0.5)
+        sp = sin(pitch * 0.5)
+        cr = cos(roll * 0.5)
+        sr = sin(roll * 0.5)
 
+        q = [0] * 4
+        q[0] = cy * cp * cr + sy * sp * sr
+        q[1] = cy * cp * sr - sy * sp * cr
+        q[2] = sy * cp * sr + cy * sp * cr
+        q[3] = sy * cp * cr - cy * sp * sr
+        return q
 
 def main():
     rclpy.init()
