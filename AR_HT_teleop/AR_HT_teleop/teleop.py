@@ -121,12 +121,12 @@ def main():
                 print_vels(target_linear_velocity, target_y_velocity, target_angular_velocity)
             elif key == 'e':
                 target_y_velocity =\
-                    check_linear_limit_velocity(target_y_velocity + LIN_VEL_STEP_SIZE)
+                    check_linear_limit_velocity(target_y_velocity - LIN_VEL_STEP_SIZE)
                 status = status + 1
                 print_vels(target_linear_velocity, target_y_velocity, target_angular_velocity)
             elif key == 'q':
                 target_y_velocity =\
-                    check_linear_limit_velocity(target_y_velocity - LIN_VEL_STEP_SIZE)
+                    check_linear_limit_velocity(target_y_velocity + LIN_VEL_STEP_SIZE)
                 status = status + 1
                 print_vels(target_linear_velocity, target_y_velocity, target_angular_velocity)
             elif key == 'x':

@@ -7,6 +7,7 @@ from AR_HT_bringup.MotorControl_odrive import MotorControl
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
+from std_msgs.msg import Float64
 from sensor_msgs.msg import JointState
 from rclpy.exceptions import ParameterNotDeclaredException
 from rcl_interfaces.msg import ParameterType
@@ -21,6 +22,7 @@ class DifControl(Node):
 		self.motors = MotorControl()
 		self.sub = self.create_subscription(Twist, 'cmd_vel', self.cmd_cb, 2)
 		self.joints_states_pub = self.create_publisher(JointState, "/joint_states", 4)
+		self.voltage_pub = self.create_publisher(Float64, "/voltage", 4)
 		self.control_timeout = time()
 		self.v_X_targ = 0
 		self.v_Y_targ = 0
@@ -48,16 +50,19 @@ class DifControl(Node):
 			self.set_speed(self.v_X_targ, self.v_Y_targ, self.w_Z_targ)
 		else:
 			self.set_speed(0, 0, 0)
+		voltage = Float64()
+		voltage.data = self.motors.get_voltage()
+		self.voltage_pub.publish(voltage)
 		self.msg.velocity[0] = -v_lf
 		self.msg.velocity[1] = v_rf
 		self.msg.velocity[2] = -v_lb
 		self.msg.velocity[3] = v_rb
 		self.joints_states_pub.publish(self.msg)
 	def set_speed(self, vX, vY, wZ): #meteres per second / radians per second
-		v_lf = (1 / self.R * (vX + vY - self.wheel_sep * (wZ) ) * (-1))/self.k
-		v_rf = (1 / self.R * (vX - vY + self.wheel_sep * (wZ) ) * (1))/self.k
-		v_lb = (1 / self.R * (- vX + vY + self.wheel_sep * (wZ) ) * (1))/self.k
-		v_rb = (1 / self.R * (- vX - vY - self.wheel_sep * (wZ) ) * (-1))/self.k
+		v_lf = (1 / self.R * (vX - vY - self.wheel_sep * (wZ) ) * (-1))/self.k
+		v_rf = (1 / self.R * (vX + vY + self.wheel_sep * (wZ) ) * (1))/self.k
+		v_lb = (1 / self.R * (- vX - vY + self.wheel_sep * (wZ) ) * (1))/self.k
+		v_rb = (1 / self.R * (- vX + vY - self.wheel_sep * (wZ) ) * (-1))/self.k
 		
 		self.motors.goal_velocity('lf', v_lf)
 		self.motors.goal_velocity('rf', v_rf)

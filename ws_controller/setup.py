@@ -1,7 +1,7 @@
 from setuptools import setup
 import os
 from glob import glob
-package_name = 'AR_HT_bringup'
+package_name = 'ws_controller'
 
 setup(
     name=package_name,
@@ -12,7 +12,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name), glob('launch/*.launch.py')),
-        (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
+        (os.path.join('share', package_name, 'params'), glob('params/*.json')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -23,11 +23,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'omni_control = AR_HT_bringup.omni_control:main',
-            'MotorControl_odrive = AR_HT_bringup.MotorControl_odrive:main',
-            'serial_connection = AR_HT_bringup.serial_script:main',
-            'odom = AR_HT_bringup.wheel_odom:main',
-            'fixer = AR_HT_bringup.scan_fixer:main',
+            'controller = ws_controller.controller:main'
         ],
     },
 )

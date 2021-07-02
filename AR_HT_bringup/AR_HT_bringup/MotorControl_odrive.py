@@ -65,6 +65,8 @@ class MotorControl():
             return self.odrv1.axis0.encoder.vel_estimate
         if motorId == 'rf': 
             return self.odrv1.axis1.encoder.vel_estimate
+    def get_voltage(self):
+        return self.odrv0.vbus_voltage  
 if __name__ == '__main__':
     motor = MotorControl()
     time.sleep(1)	

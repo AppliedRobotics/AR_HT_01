@@ -30,14 +30,14 @@ def generate_launch_description():
             package='hls_lfcd_lds_driver',
             executable='hlds_laser_publisher',
             name='hlds_laser_publisher',
-            parameters=[{'port': '/dev/ttyUSB0', 'frame_id': 'scan_left'}],
+            parameters=[{'port': '/dev/ttyUSB2', 'frame_id': 'scan_left'}],
             output='screen',
             remappings=remappings_hls_left),
         Node(
             package='hls_lfcd_lds_driver',
             executable='hlds_laser_publisher',
             name='hlds_laser_publisher',
-            parameters=[{'port': '/dev/ttyUSB2', 'frame_id': 'scan_front'}],
+            parameters=[{'port': '/dev/ttyUSB0', 'frame_id': 'scan_front'}],
             output='screen',
             remappings=remappings_hls_front),
         Node(

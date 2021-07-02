@@ -16,7 +16,7 @@ amcl:
     laser_likelihood_max_dist: 4.0
     laser_max_range: 5.0
     laser_min_range: 0.2
-    laser_model_type: "likelihood_field_prob"
+    laser_model_type: "likelihood_field"
     max_beams: 180
     max_particles: 5000
     min_particles: 700
@@ -26,7 +26,7 @@ amcl:
     recovery_alpha_fast: 0.00005
     recovery_alpha_slow: 0.00005
     resample_interval: 1
-    robot_model_type: "omnidirectional"
+    robot_model_type: "omni"
     save_pose_rate: 1.0
     sigma_hit: 0.2
     tf_broadcast: True
@@ -37,9 +37,12 @@ amcl:
     z_max: 0.05
     z_rand: 0.5
     z_short: 0.05
-    scan_topic: /scan_front
+    scan_topic: scan_front
     set_initial_pose: True
-    initial_pose: [0.0, 0.0, 0.0, 0.0]
+    initial_pose_x: 0.0
+    initial_pose_y: 0.0
+    initial_pose_z: 0.0
+    initial_pose_yaw: 0.0
 amcl_map_client:
   ros__parameters:
     use_sim_time: False
@@ -90,80 +93,116 @@ bt_navigator_rclcpp_node:
 
 controller_server:
   ros__parameters:
-    use_sim_time: False
-    controller_frequency: 20.0
-    min_x_velocity_threshold: 0.005
-    min_y_velocity_threshold: 0.005
-    min_theta_velocity_threshold: 0.005
-    progress_checker_plugin: "progress_checker"
-    goal_checker_plugin: "goal_checker"
+    odom_topic: /odom
+    use_sim_time: True
+    controller_frequency: 5.0
+    controller_plugin_types: ["teb_local_planner::TebLocalPlannerROS"]
     controller_plugins: ["FollowPath"]
-
-    # Progress checker parameters
-    progress_checker:
-      plugin: "nav2_controller::SimpleProgressChecker"
-      required_movement_radius: 0.4
-      movement_time_allowance: 20.0
-    # Goal checker parameters
-    goal_checker:
-      plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.1
-      yaw_goal_tolerance: 0.08
-      stateful: True
-    # DWB parameters
     FollowPath:
-      plugin: "dwb_core::DWBLocalPlanner"
-      debug_trajectory_details: True
-      min_vel_x: -0.2
-      min_vel_y: -0.2
-      max_vel_x: 0.2
-      max_vel_y: 0.2
-      max_vel_theta: 0.5
-      min_speed_xy: 0.0
-      max_speed_xy: 0.2
-      min_speed_theta: 0.15
-      # Add high threshold velocity for turtlebot 3 issue.
-      # https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/75
-      acc_lim_x: 2.0
-      acc_lim_y: 2.0
-      acc_lim_theta: 2.0
-      decel_lim_x: -2.0
-      decel_lim_y: -2.0
-      decel_lim_theta: -2.0
-      vx_samples: 40
-      vy_samples: 40
-      vtheta_samples: 50
-      sim_time: 4.0
-      linear_granularity: 0.05
-      angular_granularity: 0.025
-      transform_tolerance: 2.0
-      xy_goal_tolerance: 0.1
-      trans_stopped_velocity: 0.0
-      short_circuit_trajectory_evaluation: True
-      stateful: True
-      critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
-      BaseObstacle.scale: 0.015
-      PathAlign.scale: 0.25
-      # PathAlign.forward_point_distance: 0.1
-      GoalAlign.scale: 1.0
-      GoalAlign.forward_point_distance: 0.325
-      PathDist.scale: 32.0
-      GoalDist.scale: 24.0
-      RotateToGoal.scale: 10.0
-      RotateToGoal.slowing_factor: 1000.0
-      RotateToGoal.lookahead_time: -1.0
-      # critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
-      # BaseObstacle.scale: 0.02
-      # PathAlign.scale: 32.0
-      # GoalAlign.scale: 32.0
-      # Oscillation.scale: 30.0
-      # # PathAlign.forward_point_distance: 0.5
-      # # GoalAlign.forward_point_distance: 0.5
-      # PathDist.scale: 128.0
-      # GoalDist.scale: 32.0
-      # RotateToGoal.scale: 10.0
-      # RotateToGoal.slowing_factor: 5.0
-      # RotateToGoal.lookahead_time: -1.0
+      plugin: teb_local_planner::TebLocalPlannerROS
+
+      teb_autosize: 1.0
+      dt_ref: 0.3
+      dt_hysteresis: 0.1
+      max_samples: 500
+      global_plan_overwrite_orientation: True
+      allow_init_with_backwards_motion: False
+      max_global_plan_lookahead_dist: 3.0
+      global_plan_viapoint_sep: -1
+      global_plan_prune_distance: 1.0
+      exact_arc_length: False
+      feasibility_check_no_poses: 5
+      publish_feedback: False
+          
+      # Robot
+              
+      max_vel_x: 0.26
+      max_vel_x_backwards: 0.26
+      max_vel_y: 0.26
+      max_vel_theta: 1.0 
+      acc_lim_x: 2.5
+      acc_lim_theta: 3.2
+      min_turning_radius: 0.0
+
+      footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
+        type: "point"
+        # radius: 0. # for type "circular"
+      # GoalTolerance
+      xy_goal_tolerance: 0.2
+      yaw_goal_tolerance: 0.1
+      free_goal_vel: False
+      complete_global_plan: True
+      # Obstacles
+      min_obstacle_dist: 0.12
+      inflation_dist: 0.12
+      include_costmap_obstacles: True
+      costmap_obstacles_behind_robot_dist: 1.0
+      obstacle_poses_affected: 25
+
+      dynamic_obstacle_inflation_dist: 0.3
+      include_dynamic_obstacles: True 
+
+      costmap_converter_plugin: "costmap_converter::CostmapToPolygonsDBSMCCH"
+      costmap_converter_spin_thread: True
+      costmap_converter_rate: 5
+
+      # Optimization
+          
+      no_inner_iterations: 5
+      no_outer_iterations: 4
+      optimization_activate: True
+      optimization_verbose: False
+      penalty_epsilon: 0.1
+      obstacle_cost_exponent: 4.0
+      weight_max_vel_x: 2.0
+      weight_max_vel_theta: 1.0
+      weight_acc_lim_x: 1.0
+      weight_acc_lim_theta: 1
+      weight_kinematics_nh: 1000.0
+      weight_kinematics_forward_drive: 1.0
+      weight_kinematics_turning_radius: 1.0
+      weight_optimaltime: 1.0 # must be > 0
+      weight_shortest_path: 0.0
+      weight_obstacle: 100.0
+      weight_inflation: 0.2
+      weight_dynamic_obstacle: 10.0 # not in use yet
+      weight_dynamic_obstacle_inflation: 0.2
+      weight_viapoint: 1.0
+      weight_adapt_factor: 2.0
+
+      # Homotopy Class Planner
+
+      enable_homotopy_class_planning: True
+      enable_multithreading: True
+      max_number_classes: 4
+      selection_cost_hysteresis: 1.0
+      selection_prefer_initial_plan: 0.9
+      selection_obst_cost_scale: 100.0
+      selection_alternative_time_cost: False
+
+      roadmap_graph_no_samples: 15
+      roadmap_graph_area_width: 5.0
+      roadmap_graph_area_length_scale: 1.0
+      h_signature_prescaler: 0.5
+      h_signature_threshold: 0.1
+      obstacle_heading_threshold: 0.45
+      switching_blocking_period: 0.0
+      viapoints_all_candidates: True
+      delete_detours_backwards: True
+      max_ratio_detours_duration_best_duration: 3.0
+      visualize_hc_graph: False
+      visualize_with_time_as_z_axis_scale: 0.0
+
+      # Recovery
+      
+      shrink_horizon_backup: True
+      shrink_horizon_min_duration: 10.0
+      oscillation_recovery: True
+      oscillation_v_eps: 0.1
+      oscillation_omega_eps: 0.1
+      oscillation_recovery_min_duration: 10.0
+      oscillation_filter_duration: 10.0
+
 controller_server_rclcpp_node:
   ros__parameters:
     use_sim_time: False
@@ -171,21 +210,21 @@ controller_server_rclcpp_node:
 local_costmap:
   local_costmap:
     ros__parameters:
-      update_frequency: 5.0
-      publish_frequency: 5.0
+      update_frequency: 4.0
+      publish_frequency: 4.0
       global_frame: odom
       robot_base_frame: base_link
       use_sim_time: True
       rolling_window: true
       width: 3
       height: 3
-      resolution: 0.04
+      resolution: 0.05
       robot_radius: 0.25
       plugins: ["voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.4
+        inflation_radius: 0.35
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -229,12 +268,12 @@ global_costmap:
     ros__parameters:
       width: 10  
       height: 10 
-      update_frequency: 5.0
+      update_frequency: 1.0
       publish_frequency: 1.0
       global_frame: map
       robot_base_frame: base_link
       use_sim_time: True
-      robot_radius: 0.25
+      robot_radius: 0.22
       resolution: 0.05
       track_unknown_space: true
       plugins: ["static_layer", "obstacle_layer", "inflation_layer", "keepout_filter"]
@@ -301,7 +340,7 @@ map_saver:
 
 planner_server:
   ros__parameters:
-    expected_planner_frequency: 20.0
+    expected_planner_frequency: 10.0
     use_sim_time: True
     planner_plugins: ["GridBased"]
     GridBased:
@@ -341,7 +380,7 @@ robot_state_publisher:
 
 waypoint_follower:
   ros__parameters:
-    loop_rate: 5
+    loop_rate: 10
     stop_on_failure: false
     waypoint_task_executor_plugin: "wait_at_waypoint"   
     wait_at_waypoint:
