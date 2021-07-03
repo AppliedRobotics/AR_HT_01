@@ -1,27 +1,87 @@
 import rclpy
+from rclpy import node
 from rclpy.node import Node
-from AR_HT_navigation.action import ToPoseClient
 from rclpy.qos import ReliabilityPolicy, QoSProfile
 from sensor_msgs.msg import LaserScan
-class Controller(Node):
+import json
+import os
+from ament_index_python.packages import get_package_share_directory
+from ws_controller.action_client import ToPoseClient
+from geometry_msgs.msg import Twist
+from std_msgs.msg import String
+import re
+class Controller():
     def __init__(self):
-        super().__init__('navigate_to_pose_action_client')
-        self.sub_scan_left = self.create_subscription(LaserScan, 'scan_left', self.left_cb, QoSProfile(depth=10, reliability=ReliabilityPolicy.BEST_EFFORT))
-        self.sub_scan_right = self.create_subscription(LaserScan, 'scan_right', self.right_cb, QoSProfile(depth=10, reliability=ReliabilityPolicy.BEST_EFFORT))
-        self.sub_scan_front = self.create_subscription(LaserScan, 'scan_front', self.front_cb, QoSProfile(depth=10, reliability=ReliabilityPolicy.BEST_EFFORT))
+        self.node = Node('controller_ws')
+        self.sub_scan_left = self.node.create_subscription(LaserScan, 'scan_left', self.left_cb, QoSProfile(depth=10, reliability=ReliabilityPolicy.BEST_EFFORT))
+        self.sub_scan_right = self.node.create_subscription(LaserScan, 'scan_right', self.right_cb, QoSProfile(depth=10, reliability=ReliabilityPolicy.BEST_EFFORT))
+        self.sub_scan_front = self.node.create_subscription(LaserScan, 'scan_front', self.front_cb, QoSProfile(depth=10, reliability=ReliabilityPolicy.BEST_EFFORT))
+        self.cmd_vel_pub = self.node.create_publisher(Twist, "/cmd_vel", 4)
+        self.sub_state = self.node.create_subscription(String, 'command', self.command_cb)
+        path = os.path.join(get_package_share_directory('ws_controller'), 'params', 'points.json')
+        with open(path, "r") as read_file:
+            data = json.load(read_file)
+        self.points_id = data['position_id']
+        self.target_points = data['point_coordinate']
+        self.action_client = ToPoseClient(self.node)
+        self.node.create_timer(0.1, self.automat)
+        self.state = 0 #0 - do nothing, 1 - to first point, 2 - to second point, 3 - park first, 4 - park second
+        self.y_target = 0.453
+        self.x_target = 0.1
+        self.kx = 3.0
+        self.ky = 3.0
+        self.kz = 7.0
+        # self.to_point()
+    def automat(self):
+        # print(self.action_client.get_feedback())
+        a = 1
     def left_cb(self,data):
         a = data
     def right_cb(self,data):
         a = data
     def front_cb(self,data):
-        a = data
-    
+        if self.state == 3 or self.state == 4: 
+            right = data.ranges[90]
+            left = data.ranges[270]
+            y_err = self.ky*(self.y_target - right)
+            z_err = self.kz*(data.ranges[160] - data.ranges[200])
+            x_err = self.kx*(data.ranges[180]- self.x_target)
+            x_err = self.check_constrain(x_err, 0.1)
+            y_err = self.check_constrain(y_err, 0.1)
+            z_err = self.check_constrain(z_err, 0.3)
+            print(x_err, y_err, z_err)
+            msg = Twist()
+            msg.linear.x = x_err
+            msg.linear.y = y_err
+            msg.angular.z = z_err
+            self.cmd_vel_pub.publish(msg)
+    def check_constrain(self, err, constr):
+        if abs(err) > constr:
+            if err > 0:
+                return constr
+            else:
+                return -1*constr
+            
+        else:
+            return err
+    def to_point(self):
+        x = self.target_points[0][0]
+        y = self.target_points[0][1]
+        z = self.target_points[0][2]
+        result = self.action_client.send_goal(x,y,z)
+        # while self.action_client.get_feedback()['state'] != 'goal reached':
+            # print(self.action_client.get_feedback())
+    def command_cb(self, data):
+        f = data.data.split(":") 
+        move_flag = int(re.sub(r'[^0-9]','',f[0]))
+        zone = int(re.sub(r'[^0-9]','',f[1])) 
+
+        # print(self.action_client.get_feedback())
 def main(args=None):
     rclpy.init(args=args)
     controller = Controller()
-    rclpy.spin(controller)
+    rclpy.spin(controller.node)
     rclpy.shutdown()
-
-
+    
 if __name__ == '__main__':
     main()

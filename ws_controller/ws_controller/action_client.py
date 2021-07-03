@@ -1,4 +1,5 @@
 import rclpy
+from rclpy import node
 from rclpy.action import ActionClient
 from rclpy.node import Node
 from nav2_msgs.action import NavigateToPose
@@ -8,11 +9,12 @@ import json
 import threading
 from geometry_msgs.msg import PoseWithCovarianceStamped
 
-class ToPoseClient(Node):
-    def __init__(self):
-        super().__init__('navigate_to_pose_action_client')
-        self._action_client = ActionClient(self, NavigateToPose, '/navigate_to_pose')
-        self.initialpose = self.create_publisher(PoseWithCovarianceStamped, "/initialpose", 1)
+class ToPoseClient():
+    def __init__(self, node):
+        # super().__init__('navigate_to_pose_action_client')
+        self.node = node
+        self._action_client = ActionClient(self.node, NavigateToPose, '/navigate_to_pose')
+        self.initialpose = self.node.create_publisher(PoseWithCovarianceStamped, "/initialpose", 1)
         self.move_status = False
         self.feedback = {"state": "stay", 
         "number_of_recoveries": 0,
@@ -30,7 +32,7 @@ class ToPoseClient(Node):
         return [qx, qy, qz, qw]
     def set_pose(self,x,y,theta):
         pose_msg = PoseWithCovarianceStamped()
-        pose_msg.header.stamp = self.get_clock().now().to_msg()
+        pose_msg.header.stamp = self.node.get_clock().now().to_msg()
         pose_msg.header.frame_id = 'map'
         pose_msg.pose.pose.position.x = float(x)
         pose_msg.pose.pose.position.y = float(y)
@@ -49,7 +51,7 @@ class ToPoseClient(Node):
     def send_goal(self, x,y,theta):
         self.target = [x,y,theta]
         goal_msg = NavigateToPose.Goal()
-        goal_msg.pose.header.stamp = self.get_clock().now().to_msg()
+        goal_msg.pose.header.stamp = self.node.get_clock().now().to_msg()
         goal_msg.pose.header.frame_id = 'map'
         goal_msg.pose.pose.position.x = x
         goal_msg.pose.pose.position.y = y
@@ -61,8 +63,8 @@ class ToPoseClient(Node):
         print(goal_msg)
         # print(goal_msg.pose.pose.orientation.z, goal_msg.pose.pose.orientation.x, goal_msg.pose.pose.orientation.w, goal_msg.pose.pose.orientation.y)
         self._action_client.wait_for_server()
-        self._send_goal_future = self._action_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback)
-        self._send_goal_future.add_done_callback(self.goal_response_callback)
+        self.node._send_goal_future = self._action_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback)
+        self.node._send_goal_future.add_done_callback(self.goal_response_callback)
 
     def goal_response_callback(self, future):
         goal_handle = future.result()
@@ -85,6 +87,7 @@ class ToPoseClient(Node):
                 self.send_goal(self.target[0], self.target[1], self.target[2])
         else:
             self.feedback["state"] = "goal cant be reached"
+        print(self.feedback)
     def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback
         self.feedback["number_of_recoveries"] = feedback.number_of_recoveries

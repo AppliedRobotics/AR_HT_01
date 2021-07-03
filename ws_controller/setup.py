@@ -23,7 +23,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'controller = ws_controller.controller:main'
+            'controller = ws_controller.controller:main',
+            'action_client = action_client.ToPoseClient:main',
+            'udp_client = udp_client.client' 
         ],
     },
 )
