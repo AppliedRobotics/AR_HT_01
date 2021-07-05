@@ -1,6 +1,7 @@
 from setuptools import Command
 import rclpy
 from rclpy import node
+from rclpy.client import Client
 from rclpy.node import Node
 from rclpy.qos import ReliabilityPolicy, QoSProfile
 from std_msgs.msg import String
@@ -8,33 +9,40 @@ import json
 import os
 import socket
 import re
-
+import os
+import json
 class client(Node):
     def __init__(self):
         super().__init__('udp_client')
-        self.sub_state = self.create_subscription(String, 'state', self.state_cb)
+        self.sub_state = self.create_subscription(String, 'state', self.state_cb, 10)
         self.command_pub = self.create_publisher(String, "/command", 4)
-        self.node.create_timer(0.05, self.udp_receive)
-        self.node.create_timer(1.0, self.send_state)
         self.state = 'stay'
         self.zone = 0
         self.move_flag = 0
+        
+        home = os.path.expanduser("~")
+        path = home+"/config.json"
+        with open(path, "r") as read_file:
+            data = json.load(read_file)
         self.UDP_PORT_IN = 8888 
         self.UDP_PORT_OUT = 8888
-        self.UDP_SERVER_ADDRESS = 'rp' #rp adress
-        self.UDP_CLIENT_ADDRESS = 'pc' #pc adress
+        self.UDP_SERVER_ADDRESS = data["robot_adress"] #rp adress
+        self.UDP_CLIENT_ADDRESS = data["server_adress"] #pc adress
         self.MAX_UDP_PACKET=128 # max size of incoming packet to avoid sending too much data to the micro
-        self.ROBOT_ID = 240
+        self.ROBOT_ID = data["robot_id"]
         self.udp_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         self.udp_socket.bind((self.UDP_SERVER_ADDRESS, self.UDP_PORT_IN)) 
+        print(self.connect_udp())
+        self.create_timer(0.05, self.udp_receive)
+        self.create_timer(1.0, self.send_state)
         
     def send_state(self):
-        payload = "S:"+str(self.ROBOT_ID)+":"+str(self.state)+":"+str(self.zone)+"#\n"
+        payload = "S:"+self.ROBOT_ID+":"+str(self.state)+":"+str(self.zone)+"#\n"
         self.udp_socket.sendto(payload.encode(), (self.UDP_CLIENT_ADDRESS, self.UDP_PORT_OUT))
-    def automat(self):
+    def udp_receive(self):
         command_msg = String()
         try:
-            data, udp_client = self.udp_socket.recvfrom(self.MAX_UDP_PACKET)  
+            data, udp_client = self.udp_socket.recvfrom(self.MAX_UDP_PACKET, )  
             self.parser(data.decode())
             if int(self.zone) == 0:
                 zone = 200
@@ -65,8 +73,8 @@ class client(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    controller = client()
-    rclpy.spin(client)
+    Client = client()
+    rclpy.spin(Client)
     rclpy.shutdown()
     
 if __name__ == '__main__':

@@ -81,7 +81,7 @@ class ToPoseClient():
         result = future.result().result
         # self.get_logger().info('Result: {0}'.format(result))
         if self.feedback["number_of_recoveries"] < 6:
-            if self.feedback["distance_remaining"] < 0.4:
+            if self.feedback["distance_remaining"] < 0.2:
                 self.feedback["state"] = "goal reached"
             else:
                 self.send_goal(self.target[0], self.target[1], self.target[2])
