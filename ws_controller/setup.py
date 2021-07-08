@@ -25,7 +25,8 @@ setup(
         'console_scripts': [
             'controller = ws_controller.controller:main',
             'action_client = ws_controller.action_client:main',
-            'udp_client = ws_controller.udp_client:main' 
+            'udp_client = ws_controller.udp_client:main',
+            'command_pub = ws_controller.example_pub:main'
         ],
     },
 )

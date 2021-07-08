@@ -41,6 +41,9 @@ class DifControl(Node):
 	def cmd_cb(self, data):
 		self.v_X_targ = data.linear.x
 		self.v_Y_targ = data.linear.y
+		# if abs(data.angular.z) < 0.1:
+			# self.w_Z_targ = self.sign(data.angular.z)*0.1
+		# else:
 		self.w_Z_targ = data.angular.z
 		self.control_timeout = time()
 	def timer_callback(self):

@@ -60,7 +60,7 @@ class ToPoseClient():
         goal_msg.pose.pose.orientation.x = qx
         goal_msg.pose.pose.orientation.y = qy
         goal_msg.pose.pose.orientation.z = qz
-        print(goal_msg)
+        # print(goal_msg)
         # print(goal_msg.pose.pose.orientation.z, goal_msg.pose.pose.orientation.x, goal_msg.pose.pose.orientation.w, goal_msg.pose.pose.orientation.y)
         self._action_client.wait_for_server()
         self.node._send_goal_future = self._action_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback)
@@ -81,19 +81,19 @@ class ToPoseClient():
         result = future.result().result
         # self.get_logger().info('Result: {0}'.format(result))
         if self.feedback["number_of_recoveries"] < 6:
-            if self.feedback["distance_remaining"] < 0.2:
+            if self.feedback["distance_remaining"] < 0.25:
                 self.feedback["state"] = "goal reached"
             else:
                 self.send_goal(self.target[0], self.target[1], self.target[2])
         else:
             self.feedback["state"] = "goal cant be reached"
-        print(self.feedback)
+        # print(self.feedback)
     def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback
         self.feedback["number_of_recoveries"] = feedback.number_of_recoveries
         self.feedback["distance_remaining"] = feedback.distance_remaining
         self.feedback["navigation_time"] = feedback.navigation_time.sec
-        print(self.feedback)
+        # print(self.feedback)
         # self.get_logger().info('Received feedback: {0}'.format(feedback))
     def get_feedback(self):
         return self.feedback

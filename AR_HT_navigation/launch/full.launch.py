@@ -101,16 +101,16 @@ def generate_launch_description():
                               'default_bt_xml_filename': default_bt_xml_filename,
                               'use_lifecycle_mgr': 'false',
                               'map_subscribe_transient_local': 'true'}.items()),
-         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(os.path.join(bringup_dir,
-                                                       'costmap_filter.launch.py')),
-            condition=IfCondition(PythonExpression(['not ', slam])),
-            launch_arguments={'namespace': namespace,
-                              'mask': "/home/nuc/AR_HT/src/web_robot_control_flask/flask_module/static/map/map_filter.yaml",
-                              'use_sim_time': use_sim_time,
-                              'autostart': autostart,
-                              'params_file': os.path.join(costmap_filters_demo_dir, 'params', 'keepout_params.yaml')
-                              }.items()),
+        #  IncludeLaunchDescription(
+        #     PythonLaunchDescriptionSource(os.path.join(bringup_dir,
+        #                                                'costmap_filter.launch.py')),
+        #     condition=IfCondition(PythonExpression(['not ', slam])),
+        #     launch_arguments={'namespace': namespace,
+        #                       'mask': "/home/nuc/AR_HT/src/web_robot_control_flask/flask_module/static/map/map_filter.yaml",
+        #                       'use_sim_time': use_sim_time,
+        #                       'autostart': autostart,
+        #                       'params_file': os.path.join(costmap_filters_demo_dir, 'params', 'keepout_params.yaml')
+        #                       }.items()),
     ])
 
     # Create the launch description and populate
