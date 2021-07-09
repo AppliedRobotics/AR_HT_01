@@ -17,6 +17,7 @@ class Controller():
         # self.sub_scan_right = self.node.create_subscription(LaserScan, 'scan_right', self.right_cb, QoSProfile(depth=10, reliability=ReliabilityPolicy.BEST_EFFORT))
         self.sub_scan_front = self.node.create_subscription(LaserScan, 'scan_front', self.front_cb, QoSProfile(depth=10, reliability=ReliabilityPolicy.BEST_EFFORT))
         self.cmd_vel_pub = self.node.create_publisher(Twist, "/cmd_vel", 4)
+        self.state_pub = self.node.create_publisher(String, "/state", 4)
         self.sub_state = self.node.create_subscription(String, 'command', self.command_cb, 10)
         path = os.path.join(get_package_share_directory('ws_controller'), 'params', 'points.json')
         with open(path, "r") as read_file:
@@ -25,7 +26,7 @@ class Controller():
         self.target_points = data['point_coordinate']
         print(self.points_id)
         self.action_client = ToPoseClient(self.node)
-        # self.node.create_timer(0.1, self.automat)
+        self.node.create_timer(0.1, self.automat)
         self.state = 0#0 - do nothing, 1 - to first point, 2 - to second point, 3 - park first, 4 - park second, 5 - parked first, 6 - parked second
         self.command = 0 #0 - do nothing, 1 - to first point, 2 - to second point
         self.old_command = 0
@@ -40,7 +41,7 @@ class Controller():
         if self.command == 1:
             if self.state != 1 and self.state != 3 and self.state != 5:
                 self.state = 1
-                self.to_point("1")
+                self.to_point(1)
                 self.old_command = 1
                 print("go to point 1")
             elif self.check_nav_state() == True:
@@ -50,13 +51,16 @@ class Controller():
         elif self.command == 2:
             if self.state != 2 and self.state != 4 and self.state != 6:
                 self.state = 2
-                self.to_point("2")
+                self.to_point(2)
                 self.old_command = 2
                 print("go to point 2")
             elif self.check_nav_state() == True:
                 #statrt parking second
                 print("reach point 2")
                 self.state = 4
+        msg = String()
+        msg.data = str(self.state)
+        self.state_pub.publish(msg)
         # self.check_nav_state()
     def check_nav_state(self):
         feedback = self.action_client.get_feedback()
@@ -102,21 +106,24 @@ class Controller():
         else:
             return err
     def to_point(self, point_num):
-        x = self.target_points[0][0]
-        y = self.target_points[0][1]
-        z = self.target_points[0][2]
+        x = self.target_points[point_num - 1][0]
+        y = self.target_points[point_num - 1][1]
+        z = self.target_points[point_num - 1][2]
         result = self.action_client.send_goal(x,y,z)
         # while self.action_client.get_feedback()['state'] != 'goal reached':
             # print(self.action_client.get_feedback())
     def command_cb(self, data):
         # print(data.data)
-        f = data.data.split(":") 
-        move_flag = int(re.sub(r'[^0-9]','',f[0]))
-        zone = int(re.sub(r'[^0-9]','',f[1])) 
-        if move_flag == 0:
-            self.command = 0
-        else:
-            self.command = zone
+        try:
+            f = data.data.split(":") 
+            move_flag = int(re.sub(r'[^0-9]','',f[0]))
+            zone = int(re.sub(r'[^0-9]','',f[1])) 
+            if move_flag == 0:
+                self.command = 0
+            else:
+                self.command = zone
+        except Exception as e:
+            print(e)
         # print(self.action_client.get_feedback())
 def main(args=None):
     rclpy.init(args=args)
