@@ -44,7 +44,7 @@ def generate_launch_description():
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value="/home/nuc/AR_HT/src/AR_HT_01/AR_HT_navigation/map/office.yaml",
+        default_value="/home/root/ws/src/AR_HT_01/AR_HT_navigation/map/office.yaml",
         description='Full path to map yaml file to load')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(

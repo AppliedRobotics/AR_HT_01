@@ -10,65 +10,37 @@ from std_msgs.msg import UInt32MultiArray, Float32, Int32MultiArray, Bool
 class SerialControl(Node):
     def __init__(self, num_of_wheels):
         super().__init__('serial_connection')
-        self.ir_pub = self.create_publisher(UInt32MultiArray, 'ir_array', 1)
-        self.bat_pub = self.create_publisher(Float32, 'battery_voltage', 1)
-        self.us_pub = self.create_publisher(Int32MultiArray, 'us_sensors', 1)
-        self.subscription_1 = self.create_subscription(Bool,'lift',self.lift_callback,10) #true - up, false - down
-        self.line = []
-        self.jointstate = JointState()
-        self.num_of_wheels = num_of_wheels
-        self.jointstate.header.frame_id = 'base_link'
-        for i in range(0, self.num_of_wheels):
-            self.jointstate.name.append("motor_"+str(i+1))
-            self.jointstate.position.append(0)
-            self.jointstate.effort.append(0)
-            self.jointstate.velocity.append(0)
-        self.array_msg = UInt32MultiArray()
-        self.us_msg = Int32MultiArray()
-        self.voltage = Float32()
-        self.previous_cmd_time = time()
-        param = self.declare_parameter('usb', '/dev/ttyACM1')
-        if self.get_parameter('usb').get_parameter_value().string_value is not None:
-            param = self.get_parameter('usb').get_parameter_value().string_value
-            print("opencr connected with port: "+param)
-        else:
-            param = '/dev/ttyACM1'
-        self.ser = serial.Serial(param, 115200 ,timeout=1.0)
-        self.create_timer(0.5, self.read)
-
-    def lift_callback(self,data):
+        self.subscription_1 = self.create_subscription(Bool,'gripper',self.gripper_callback,10) #true - up, false - down
+        # param = self.declare_parameter('usb', '/dev/ttyACM2')
+        # if self.get_parameter('usb').get_parameter_value().string_value is not None:
+        #     param = self.get_parameter('usb').get_parameter_value().string_value
+        #     print("opencr connected with port: "+param)
+        # else:
+        #     param = '/dev/ttyACM2'
+        param = '/dev/ttyACM2'
+        self.port = serial.Serial(param, 115200 ,timeout=1.0)
+        # self.create_timer(0.5, self.write)
+        self.flag = 1
+    def gripper_callback(self, data):
         if data.data == True:
-            s = str(1)+"\n"
-            self.ser.write(s.encode())
+            start = '1'.encode()
+            self.port.write(start)
+            print("start")
         else:
-            s = str(0)+"\n"
-            self.ser.write(s.encode())
+            stop = '2'.encode()
+            self.port.write(stop)
+            print("stop")
+    def write(self):
+        # b = self.port.readline()
+        # print(b)
+        print(self.flag)
+        start = '1'.encode()
+        stop = '2'.encode()
+        if(self.flag == 1):
+            self.port.write(start)
+        else:
+            self.port.write(stop)
 
-    def read(self):
-        try:
-            b = str(self.ser.readline())
-            # print(b)
-            b = b.replace('b', '')
-            b = b.replace("'",'')
-            b = b.replace("n",'')
-            b = b.replace("r",'')
-            b = b.replace("\\",'')
-            b = b.split(',')
-            if b[0] == 'light':
-                for i in range(1,29):
-                    self.array_msg.data.append(int(b[i]))
-                self.ir_pub.publish(self.array_msg)
-                self.array_msg.data = []
-            elif b[0] == 'vol':
-                self.voltage.data = float(b[1])
-                self.bat_pub.publish(self.voltage)
-            elif b[0] == 'us':
-                for i in range(1,7):
-                    self.us_msg.data.append(int(b[i]))
-                self.us_pub.publish(self.us_msg)
-                self.us_msg.data = []
-        except Exception as e:
-            print(e)
 def main(args=None):
     rclpy.init(args=args)
     conn = SerialControl(2)
