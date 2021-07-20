@@ -37,9 +37,16 @@ def generate_launch_description():
             package='hls_lfcd_lds_driver',
             executable='hlds_laser_publisher',
             name='hlds_laser_publisher',
-            parameters=[{'port': '/dev/ttyUSB0', 'frame_id': 'scan_front'}],
+            parameters=[{'port': '/dev/ttyUSB0', 'frame_id': 'scan_front_wrong'}],
             output='screen',
             remappings=remappings_hls_front),
+        Node(
+            package='AR_HT_bringup',
+            executable='scan_fixer',
+            name='scan_fixer_node',
+            output='screen',
+            emulate_tty=True,
+        ),
         Node(
             package='AR_HT_bringup',
             executable='omni_control',

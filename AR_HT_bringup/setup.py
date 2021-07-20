@@ -27,7 +27,7 @@ setup(
             'MotorControl_odrive = AR_HT_bringup.MotorControl_odrive:main',
             'serial_connection = AR_HT_bringup.serial_script:main',
             'odom = AR_HT_bringup.wheel_odom:main',
-            'fixer = AR_HT_bringup.scan_fixer:main',
+            'scan_fixer = AR_HT_bringup.scan_fixer:main',
         ],
     },
 )
