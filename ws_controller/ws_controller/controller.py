@@ -27,11 +27,12 @@ class Controller():
         print(self.points_id)
         self.action_client = ToPoseClient(self.node)
         self.node.create_timer(0.1, self.automat)
-        self.state = 0#0 - do nothing, 1 - to first point, 2 - to second point, 3 - park first, 4 - park second, 5 - parked first, 6 - parked second
+        self.state = 0#0 - do nothing, 1 - to first point, 2 - to second point, 3 - park first, 4 - park second, 
+        #5 - parked first, 6 - parked second, 7 - to third point, 8 - parked third
         self.command = 0 #0 - do nothing, 1 - to first point, 2 - to second point
         self.old_command = 0
-        self.y_target = 0.453
-        self.x_target = 0.1
+        self.y_target = 0.6
+        self.x_target = 0.15
         self.kx = 3.0
         self.ky = 3.0
         self.kz = 7.0
@@ -58,6 +59,16 @@ class Controller():
                 #statrt parking second
                 print("reach point 2")
                 self.state = 4
+        elif self.command == 3:
+            if self.state != 7 and self.state != 8:
+                self.state = 7
+                self.to_point(3)
+                self.old_command = 3
+                print("go to point 3")
+            elif self.check_nav_state() == True:
+                print("reach point 3")
+                self.state = 8
+
         msg = String()
         msg.data = str(self.state)
         self.state_pub.publish(msg)
@@ -73,22 +84,23 @@ class Controller():
         if self.state == 3 or self.state == 4: 
             right = data.ranges[90]
             left = data.ranges[270]
-            if self.state == 3:
-                y_err = self.ky*(self.y_target - right)
-            else:
-                y_err = self.ky*(-self.y_target + left)
-            z_err = self.kz*(data.ranges[160] - data.ranges[200])
+            # if self.state == 4:
+            y_err = self.ky*(self.y_target - right)
+            # else:
+                # y_err = self.ky*(-self.y_target + left)
+            z_err = self.kz*(data.ranges[150] - data.ranges[197])
             x_err = self.kx*(data.ranges[180]- self.x_target)
+            print(x_err, y_err, z_err)
             x_err = self.check_constrain(x_err, 0.1)
             y_err = self.check_constrain(y_err, 0.1)
             z_err = self.check_constrain(z_err, 0.3)
-            print(x_err, y_err, z_err)
+         
             msg = Twist()
             msg.linear.x = x_err
             msg.linear.y = y_err
             msg.angular.z = z_err
             self.cmd_vel_pub.publish(msg)
-            if(abs(x_err) < 0.1 and abs(y_err) < 0.1 and abs(z_err) < 0.1):
+            if(abs(x_err) < 0.1 and abs(y_err) < 0.1 and abs(z_err) < 0.05):
                 self.state +=2
                 self.command = 0
                 msg.linear.x = 0.0

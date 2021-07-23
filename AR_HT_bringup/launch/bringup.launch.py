@@ -10,7 +10,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     remappings_hls_right = [('/scan', '/scan_right'),]
     remappings_hls_left = [('/scan', '/scan_left'),]
-    remappings_hls_front = [('/scan', '/scan_front'),]
+    remappings_hls_front = [('/scan', '/scan_front_wrong'),]
 
     package_dir = get_package_share_directory('AR_HT_bringup')
     config = os.path.join(
@@ -23,21 +23,21 @@ def generate_launch_description():
             package='hls_lfcd_lds_driver',
             executable='hlds_laser_publisher',
             name='hlds_laser_publisher',
-            parameters=[{'port': '/dev/ttyUSB2', 'frame_id': 'scan_right'}],
+            parameters=[{'port': '/dev/ttyUSB3', 'frame_id': 'scan_right'}],
             output='screen',
             remappings=remappings_hls_right),
         Node(
             package='hls_lfcd_lds_driver',
             executable='hlds_laser_publisher',
             name='hlds_laser_publisher',
-            parameters=[{'port': '/dev/ttyUSB1', 'frame_id': 'scan_left'}],
+            parameters=[{'port': '/dev/ttyUSB2', 'frame_id': 'scan_left'}],
             output='screen',
             remappings=remappings_hls_left),
         Node(
             package='hls_lfcd_lds_driver',
             executable='hlds_laser_publisher',
             name='hlds_laser_publisher',
-            parameters=[{'port': '/dev/ttyUSB0', 'frame_id': 'scan_front_wrong'}],
+            parameters=[{'port': '/dev/ttyUSB1', 'frame_id': 'scan_front'}],
             output='screen',
             remappings=remappings_hls_front),
         Node(
