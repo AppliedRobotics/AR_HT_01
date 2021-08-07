@@ -14,7 +14,7 @@ class ScanFixer(Node):
         data.header.stamp = self.get_clock().now().to_msg()
         i = 0
         for range_ in data.ranges:
-            if(i >= 150 and i <= 180):
+            if(i >= 0 and i <= 15) or (i>=345 and i <=360):
                 data.ranges[i] = 0
                 data.intensities[i] = 0
             i+=1
