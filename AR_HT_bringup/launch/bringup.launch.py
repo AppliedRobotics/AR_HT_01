@@ -23,7 +23,7 @@ def generate_launch_description():
             package='hls_lfcd_lds_driver',
             executable='hlds_laser_publisher',
             name='hlds_laser_publisher',
-            parameters=[{'port': '/dev/ttyUSB3', 'frame_id': 'scan_right'}],
+            parameters=[{'port': '/dev/ttyUSB1', 'frame_id': 'scan_right'}],
             output='screen',
             remappings=remappings_hls_right),
         Node(
@@ -37,7 +37,7 @@ def generate_launch_description():
             package='hls_lfcd_lds_driver',
             executable='hlds_laser_publisher',
             name='hlds_laser_publisher',
-            parameters=[{'port': '/dev/ttyUSB1', 'frame_id': 'scan_front'}],
+            parameters=[{'port': '/dev/ttyUSB3', 'frame_id': 'scan_front'}],
             output='screen',
             remappings=remappings_hls_front),
         Node(
@@ -61,13 +61,13 @@ def generate_launch_description():
             output='screen',
             emulate_tty=True,
         ),
-        # Node(
-        #     package='AR_HT_bringup',
-        #     executable='serial_connection',
-        #     name='serial_node',
-        #     output='screen',
-        #     emulate_tty=True,
-        # ),
+        Node(
+            package='AR_HT_bringup',
+            executable='serial_connection',
+            name='serial_node',
+            output='screen',
+            emulate_tty=True,
+        ),
         # Node(
         #     package='AR_HT_bringup',
         #     executable='fixer',

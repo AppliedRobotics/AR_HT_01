@@ -17,7 +17,7 @@ class SerialControl(Node):
         #     print("opencr connected with port: "+param)
         # else:
         #     param = '/dev/ttyACM2'
-        param = '/dev/ttyACM2'
+        param = '/dev/ttyACM0'
         self.port = serial.Serial(param, 115200 ,timeout=1.0)
         # self.create_timer(0.5, self.write)
         self.flag = 1

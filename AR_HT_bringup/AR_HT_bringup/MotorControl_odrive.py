@@ -43,8 +43,8 @@ import time
 class MotorControl():
     def __init__(self):
         #init_odrive serial number in
-        self.odrv0 = odrive.find_any(serial_number = "306634523439")
-        self.odrv1 = odrive.find_any(serial_number = "207735823056") # or 35790860398678
+        self.odrv0 = odrive.find_any(serial_number = "306734713439")
+        self.odrv1 = odrive.find_any(serial_number = "208D35853056") # or 35790860398678
         # print(self.odrv0)
     def goal_velocity(self, motorId, rps):
         if motorId == 'rb': 
