@@ -62,6 +62,7 @@ class DifControl(Node):
 		self.msg.velocity[3] = v_rb
 		self.joints_states_pub.publish(self.msg)
 	def set_speed(self, vX, vY, wZ): #meteres per second / radians per second
+		vX = -1*vX
 		v_lf = (1 / self.R * (vX - vY - self.wheel_sep * (wZ) ) * (-1))/self.k
 		v_rf = (1 / self.R * (vX + vY + self.wheel_sep * (wZ) ) * (1))/self.k
 		v_lb = (1 / self.R * (- vX - vY + self.wheel_sep * (wZ) ) * (1))/self.k

@@ -154,7 +154,7 @@ class WheelOdom(Node):
         # Vy=(-vel0-vel2+vel3+vel1)*(R/4)
         # Vtheta=(-vel0+vel2-vel3+vel1)*(R/(4*wheel_separation))
         
-        Vx = (v_lf + v_rf + v_lb + v_rb) * (self.RADIUS/4) * self.k
+        Vx = -1*(v_lf + v_rf + v_lb + v_rb) * (self.RADIUS/4) * self.k
         Vy = (-v_lf + v_rf + v_lb - v_rb) * (self.RADIUS/4) * self.k 
         Vtheta = (-v_lf + v_rf - v_lb + v_rb) * (self.RADIUS/(4*self.WHEEL_SEPARATION)) * self.kw
         # Vtheta = 0.0

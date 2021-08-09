@@ -61,13 +61,13 @@ def generate_launch_description():
             output='screen',
             emulate_tty=True,
         ),
-        Node(
-            package='AR_HT_bringup',
-            executable='serial_connection',
-            name='serial_node',
-            output='screen',
-            emulate_tty=True,
-        ),
+        # Node(
+        #     package='AR_HT_bringup',
+        #     executable='serial_connection',
+        #     name='serial_node',
+        #     output='screen',
+        #     emulate_tty=True,
+        # ),
         # Node(
         #     package='AR_HT_bringup',
         #     executable='fixer',
