@@ -1,0 +1,10 @@
+[Unit]
+Description=Full robot launch
+After=udp2motorcortex.service
+[Service]
+ExecStartPre=sleep 30
+Environment=HOME=/home/root/
+ExecStart=bash -c ". /etc/profile.d/setup.sh; ros2 launch AR_HT_bringup full.launch.py"
+
+[Install]
+WantedBy=multi-user.target
