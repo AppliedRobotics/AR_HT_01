@@ -100,8 +100,8 @@ def main(args=None):
     thread = threading.Thread(target=rclpy.spin, args=(action_client, ), daemon=True)
     thread.start()
     rate = action_client.create_rate(2)
-    # future = action_client.send_goal(-1.85,-1.12,5.1)
-    action_client.set_pose(1.0,0.0,3.0)
+    future = action_client.send_goal(1.73,0.3,0.0)
+    # action_client.set_pose(1.0,0.0,3.0)
     while rclpy.ok():
         try:
             print(action_client.get_feedback())

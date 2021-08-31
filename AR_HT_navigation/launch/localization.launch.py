@@ -64,7 +64,7 @@ def generate_launch_description():
 
         DeclareLaunchArgument(
             'map',
-            default_value="/home/nuc/AR_HT/src/web_robot_control_flask/flask_module/static/map/map.yaml",
+            default_value="/home/nuc/ws/src/flask_module/static/map/map.yaml",
             description='Full path to map yaml file to load'),
 
         DeclareLaunchArgument(

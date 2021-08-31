@@ -13,7 +13,7 @@ class WheelOdom(Node):
         super().__init__('wheel_odom')
         self.sub = self.create_subscription(
             JointState, 'joint_states', self.js_cb, 10)
-        self.odom_pub = self.create_publisher(Odometry, "odom_dirty", 10)
+        self.odom_pub = self.create_publisher(Odometry, "odom", 10)
         self.odom_broadcaster = TransformBroadcaster(self)
         self.BASELINE = 0.430
         self.WHEELRADIUS = 0.115
@@ -37,38 +37,23 @@ class WheelOdom(Node):
             quaternion.y = 0.0
             quaternion.z = sin(self.theta / 2)
             quaternion.w = cos(self.theta / 2)
-            # transform_stamped_msg = TransformStamped()
-            # transform_stamped_msg.header.stamp = now.to_msg()
-            # transform_stamped_msg.header.frame_id = 'odom'
-            # transform_stamped_msg.child_frame_id = 'base_link'
-            # transform_stamped_msg.transform.translation.x = self.x
-            # transform_stamped_msg.transform.translation.y = self.y
-            # transform_stamped_msg.transform.translation.z = 0.0
-            # transform_stamped_msg.transform.rotation.x = quaternion.x
-            # transform_stamped_msg.transform.rotation.y = quaternion.y
-            # transform_stamped_msg.transform.rotation.z = quaternion.z
-            # transform_stamped_msg.transform.rotation.w = quaternion.w
-            # self.odom_broadcaster.sendTransform(transform_stamped_msg)
-            quaternion.x = 0.0
-            quaternion.y = 0.0
-            quaternion.z = 0.0
-            quaternion.w = 1.0
             transform_stamped_msg = TransformStamped()
             transform_stamped_msg.header.stamp = now.to_msg()
-            transform_stamped_msg.header.frame_id = 'base_link'
-            transform_stamped_msg.child_frame_id = 'laser_hokuyo'
-            transform_stamped_msg.transform.translation.x = 0.150
-            transform_stamped_msg.transform.translation.y = 0.0
-            transform_stamped_msg.transform.translation.z = 0.4
+            transform_stamped_msg.header.frame_id = 'odom'
+            transform_stamped_msg.child_frame_id = 'base_link'
+            transform_stamped_msg.transform.translation.x = self.x
+            transform_stamped_msg.transform.translation.y = self.y
+            transform_stamped_msg.transform.translation.z = 0.0
             transform_stamped_msg.transform.rotation.x = quaternion.x
             transform_stamped_msg.transform.rotation.y = quaternion.y
             transform_stamped_msg.transform.rotation.z = quaternion.z
             transform_stamped_msg.transform.rotation.w = quaternion.w
             self.odom_broadcaster.sendTransform(transform_stamped_msg)
-            quaternion.x = 0.0
-            quaternion.y = 0.0
-            quaternion.z = 0.0
-            quaternion.w = 1.0
+            q = self.quaternion_from_euler(0.0,0.0, 0.0)
+            quaternion.x = q[1]
+            quaternion.y = q[2]
+            quaternion.z = q[3]
+            quaternion.w = q[0]
             transform_stamped_msg = TransformStamped()
             transform_stamped_msg.header.stamp = now.to_msg()
             transform_stamped_msg.header.frame_id = 'base_link'
@@ -104,6 +89,20 @@ class WheelOdom(Node):
             odom.twist.covariance[35] = 0.01
             self.odom_pub.publish(odom)
            
+    def quaternion_from_euler(self, roll, pitch, yaw):    
+        cy = cos(yaw * 0.5)
+        sy = sin(yaw * 0.5)
+        cp = cos(pitch * 0.5)
+        sp = sin(pitch * 0.5)
+        cr = cos(roll * 0.5)
+        sr = sin(roll * 0.5)
+
+        q = [0] * 4
+        q[0] = cy * cp * cr + sy * sp * sr
+        q[1] = cy * cp * sr - sy * sp * cr
+        q[2] = sy * cp * sr + cy * sp * cr
+        q[3] = sy * cp * cr - cy * sp * sr
+        return q
 
     def calculate_odom(self, delta, Lvel, Rvel):
         # Lvel= -Lvel
@@ -113,7 +112,7 @@ class WheelOdom(Node):
         
         Vy = 0
         # New theta for caclulationg rotation matrix:
-        Vtheta = -1.6*(self.WHEELRADIUS)*(Rvel-Lvel)/self.BASELINE
+        Vtheta = (self.WHEELRADIUS)*(Lvel-Rvel)/self.BASELINE
         # Rotation matrix
         self.theta += delta * Vtheta
         self.y += delta * sin(self.theta)*Vx

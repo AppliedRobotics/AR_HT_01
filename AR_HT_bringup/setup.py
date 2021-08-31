@@ -24,7 +24,7 @@ setup(
     entry_points={
         'console_scripts': [
             'dif_control = AR_HT_bringup.dif_control:main',
-            'MotorControl = AR_HT_bringup.MotorControl:main',
+            'MotorControl_odrive = AR_HT_bringup.MotorControl_odrive:main',
             'serial_connection = AR_HT_bringup.serial_script:main',
             'odom = AR_HT_bringup.wheel_odom:main',
             'ekf = AR_HT_bringup.ekf:main',
