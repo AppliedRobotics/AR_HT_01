@@ -46,13 +46,13 @@ def generate_launch_description():
     # https://github.com/ros/robot_state_publisher/pull/30
     # TODO(orduno) Substitute with `PushNodeRemapping`
     #              https://github.com/ros2/launch_ros/issues/56
-    remappings = [('/tf', 'tf'),
+    remappings = [('/tf', '/tf'),
                   ('/tf_static', 'tf_static')]
 
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {
         'use_sim_time': use_sim_time,
-        'default_bt_xml_filename': default_bt_xml_filename,
+        # 'default_bt_xml_filename': default_bt_xml_filename,
         'autostart': autostart,
         'map_subscribe_transient_local': map_subscribe_transient_local}
 
@@ -98,8 +98,8 @@ def generate_launch_description():
             package='nav2_controller',
             executable='controller_server',
             output='screen',
-            parameters=[configured_params],
-            remappings=remappings),
+            parameters=[configured_params]),
+            # remappings=remappings),
 
         Node(
             package='nav2_planner',

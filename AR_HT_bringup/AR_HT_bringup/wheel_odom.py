@@ -49,7 +49,7 @@ class WheelOdom(Node):
             transform_stamped_msg.transform.rotation.z = quaternion.z
             transform_stamped_msg.transform.rotation.w = quaternion.w
             self.odom_broadcaster.sendTransform(transform_stamped_msg)
-            q = self.quaternion_from_euler(0.0,0.0, 0.0)
+            q = self.quaternion_from_euler(0.0,0.0,0.0)
             quaternion.x = q[1]
             quaternion.y = q[2]
             quaternion.z = q[3]
@@ -58,7 +58,7 @@ class WheelOdom(Node):
             transform_stamped_msg.header.stamp = now.to_msg()
             transform_stamped_msg.header.frame_id = 'base_link'
             transform_stamped_msg.child_frame_id = 'laser_hls'
-            transform_stamped_msg.transform.translation.x = -0.350
+            transform_stamped_msg.transform.translation.x = -0.360
             transform_stamped_msg.transform.translation.y = 0.0
             transform_stamped_msg.transform.translation.z = 0.4
             transform_stamped_msg.transform.rotation.x = quaternion.x
