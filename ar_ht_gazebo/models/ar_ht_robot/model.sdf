@@ -10,14 +10,14 @@
       <inertial>
         <pose>-0.057 0 0.0 0.091 0 0</pose>
         <inertia>
-          <ixx>0.09</ixx>
+          <ixx>0.009</ixx>
           <ixy>0.004</ixy>
           <ixz>0.009</ixz>
-          <iyy>0.13</iyy>
+          <iyy>0.013</iyy>
           <iyz>-0.0008</iyz>
-          <izz>0.18</izz>
+          <izz>0.8</izz>
         </inertia>
-        <mass>15.0</mass>
+        <mass>15.3</mass>
       </inertial>
 
       <collision name="base_collision">
@@ -40,7 +40,7 @@
         </geometry>
       </visual>
     </link>
-
+<!-- 
     <link name="hokuyo_scan">
       <inertial>
         <pose>0.102 0 0.183 0 0 0</pose>
@@ -102,16 +102,16 @@
         </ray>
         <plugin name="hokuyo_laserscan" filename="libgazebo_ros_ray_sensor.so">
           <ros>
-            <!-- <namespace>/tb3</namespace> -->
+            
             <remapping>~/out:=scan_1</remapping>
           </ros>
           <output_type>sensor_msgs/LaserScan</output_type>
           <frame_name>scan_1</frame_name>
         </plugin>
       </sensor>
-    </link>
+    </link>  -->
     
-    <link name="lds_scan">
+    <!-- <link name="lds_scan">
       <inertial>
         <pose>-0.3335 0 0.183 0 0 -3.14</pose>
         <inertia>
@@ -172,14 +172,14 @@
         </ray>
         <plugin name="lds_laserscan" filename="libgazebo_ros_ray_sensor.so">
           <ros>
-            <!-- <namespace>/tb3</namespace> -->
+            
             <remapping>~/out:=scan_2</remapping>
           </ros>
           <output_type>sensor_msgs/LaserScan</output_type>
           <frame_name>scan_2</frame_name>
         </plugin>
       </sensor>
-    </link>
+    </link> -->
 
     <link name="wheel_left_link">
 
@@ -191,9 +191,9 @@
           <ixz>0.000</ixz>
           <iyy>0.001</iyy>
           <iyz>0.000</iyz>
-          <izz>0.001</izz>
+          <izz>0.0115</izz>
         </inertia>
-        <mass>0.01</mass>
+        <mass>0.87</mass>
       </inertial>
 
       <collision name="wheel_left_collision">
@@ -249,9 +249,9 @@
           <ixz>0.000</ixz>
           <iyy>0.001</iyy>
           <iyz>0.000</iyz>
-          <izz>0.001</izz>
+          <izz>0.015</izz>
         </inertia>
-        <mass>0.01</mass>
+        <mass>0.87</mass>
       </inertial>
 
       <collision name="wheel_right_collision">
@@ -392,7 +392,7 @@
 
       <ros>
         <!-- <namespace>/tb3</namespace> -->
-        <argument>odom:=odom_ideal</argument>
+        <argument>odom:=odom_clean</argument>
       </ros>
 
       <update_rate>30</update_rate>
@@ -406,7 +406,7 @@
       <wheel_diameter>0.23</wheel_diameter>
 
       <!-- limits -->
-      <max_wheel_torque>10</max_wheel_torque>
+      <max_wheel_torque>14.7</max_wheel_torque>
       <max_wheel_acceleration>1.0</max_wheel_acceleration>
 
       <command_topic>cmd_vel</command_topic>
@@ -416,18 +416,18 @@
       <publish_odom_tf>false</publish_odom_tf>
       <publish_wheel_tf>false</publish_wheel_tf>
 
-      <odometry_topic>odom_ideal</odometry_topic>
-      <odometry_frame>odom_ideal</odometry_frame>
-      <robot_base_frame>base_footprint_ideal</robot_base_frame>
+      <odometry_topic>odom_clean</odometry_topic>
+      <odometry_frame>odom_clean</odometry_frame>
+      <robot_base_frame>base_footprint_clean</robot_base_frame>
 
     </plugin>
 
     <plugin name="ar_ht_joint_state" filename="libgazebo_ros_joint_state_publisher.so">
       <ros>
         <!-- <namespace>/tb3</namespace> -->
-        <remapping>~/out:=joint_states</remapping>
+        <remapping>~/out:=joint_states_clean</remapping>
       </ros>
-      <update_rate>30</update_rate>
+      <update_rate>31</update_rate>
       <joint_name>wheel_left_joint</joint_name>
       <joint_name>wheel_right_joint</joint_name>
     </plugin>      

@@ -27,18 +27,13 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
-    world_file_name = 'ar_ht_worlds/ar_ht.model'
+    world_file_name = 'ar_ht_worlds/ar_ht_simple.model'
     world = os.path.join(get_package_share_directory('ar_ht_gazebo'),
                          'worlds', world_file_name)
     launch_file_dir = os.path.join(get_package_share_directory('ar_ht_gazebo'), 'launch')
     pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
     return LaunchDescription([
-        Node(
-            package='gazebo_noiser',
-            executable='noise_odom',
-            name='noiser_odom',
-            output='screen',
-        ),
+        
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(pkg_gazebo_ros, 'launch', 'gzserver.launch.py')
