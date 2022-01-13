@@ -34,7 +34,8 @@ def generate_launch_description():
 
     start_sync_slam_toolbox_node = Node(
         parameters=[
-            os.path.join(bringup_dir, 'params', 'online_async.yaml')
+            os.path.join(bringup_dir, 'params', 'online_async.yaml'),
+            {'use_sim_time': use_sim_time}
         ],
         package='slam_toolbox',
         executable='async_slam_toolbox_node',

@@ -9,7 +9,7 @@ from geometry_msgs.msg import TransformStamped
 class OdomNoise(Node):
     def __init__(self):
         super().__init__('odom_noise')
-        self.sub = self.create_subscription(Odometry, 'odom_ideal', self.odom_cb, 10)
+        self.sub = self.create_subscription(Odometry, 'odom_clean', self.odom_cb, 10)
         self.odom_pub = self.create_publisher(Odometry, "odom", 10)
         random.seed()
         self.alpha_0 = 0.5
@@ -28,8 +28,10 @@ class OdomNoise(Node):
         if self.first_msg_flag == False:
             delta = time.time() - self.current_time
             self.current_time = time.time()
-            # v_clean = round(data.twist.twist.linear.x, 3)
+            #v_clean = round(data.twist.twist.linear.x, 3)
             # w_clean = round(data.twist.twist.angular.z, 3)
+            
+            
             vel_x = data.twist.twist.linear.x + self.get_random_vel(data.twist.twist.linear.x, data.twist.twist.angular.z, self.alpha_0, self.alpha_1)
             w_z = data.twist.twist.angular.z + self.get_random_vel(data.twist.twist.angular.x, data.twist.twist.angular.z, self.alpha_1, self.alpha_2)
             gamma = self.get_random_vel(data.twist.twist.angular.x, data.twist.twist.angular.z, self.alpha_4, self.alpha_5)
@@ -45,6 +47,7 @@ class OdomNoise(Node):
              data.pose.pose.orientation.y,
              data.pose.pose.orientation.z,
              data.pose.pose.orientation.w)
+   
     def send_tf_and_odom(self, vel_x, w_z, _time_ = 0):
         # if _time_ == 0.0:
             # _time_ = self.get_clock().now().to_msg()
@@ -72,18 +75,6 @@ class OdomNoise(Node):
         transform_stamped_msg.transform.rotation.z = 0.0
         transform_stamped_msg.transform.rotation.w = 1.0
         self.odom_broadcaster.sendTransform(transform_stamped_msg)
-        transform_stamped_msg.header.stamp = _time_ 
-        transform_stamped_msg.header.frame_id = 'base_link'
-        transform_stamped_msg.child_frame_id = 'scan_2'
-        transform_stamped_msg.transform.translation.x = -0.3335
-        transform_stamped_msg.transform.translation.y = 0.0
-        transform_stamped_msg.transform.translation.z = 0.183
-        transform_stamped_msg.transform.rotation.x = 0.0
-        transform_stamped_msg.transform.rotation.y = 0.0
-        transform_stamped_msg.transform.rotation.z = 0.0
-        transform_stamped_msg.transform.rotation.w = 1.0
-        self.odom_broadcaster.sendTransform(transform_stamped_msg)
-        
         msg = Odometry()
         msg.pose.pose.position.x = self.x
         msg.pose.pose.position.y = self.y
@@ -92,6 +83,7 @@ class OdomNoise(Node):
         msg.twist.twist.linear.x = vel_x
         msg.twist.twist.angular.z = w_z
         self.odom_pub.publish(msg)
+    
     def get_random_vel(self, vel, w, alpha_0, alpha_1):
         sigma = vel**2 * alpha_0 + w**2 * alpha_1
         rand_sum = 0

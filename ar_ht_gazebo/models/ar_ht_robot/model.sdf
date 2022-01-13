@@ -40,7 +40,7 @@
         </geometry>
       </visual>
     </link>
-<!-- 
+
     <link name="hokuyo_scan">
       <inertial>
         <pose>0.102 0 0.183 0 0 0</pose>
@@ -103,13 +103,13 @@
         <plugin name="hokuyo_laserscan" filename="libgazebo_ros_ray_sensor.so">
           <ros>
             
-            <remapping>~/out:=scan_1</remapping>
+            <remapping>~/out:=scan</remapping>
           </ros>
           <output_type>sensor_msgs/LaserScan</output_type>
           <frame_name>scan_1</frame_name>
         </plugin>
       </sensor>
-    </link>  -->
+    </link>
     
     <!-- <link name="lds_scan">
       <inertial>
