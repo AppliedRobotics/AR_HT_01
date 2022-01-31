@@ -1,0 +1,21 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/rodion/projects/ar_ht/install/ar_ht_gazebo/include/**",
+        "/opt/ros/galactic/include/**",
+        "/home/rodion/rodion_nav/install/line_msgs/include/**",
+        "/home/rodion/rodion_nav/install/circle_msgs/include/**",
+        "/home/rodion/rodion_nav/install/blobs_msgs/include/**",
+        "/home/rodion/rodion_nav/install/aruco_msgs/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}

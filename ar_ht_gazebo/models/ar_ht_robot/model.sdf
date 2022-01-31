@@ -75,7 +75,7 @@
         </geometry>
       </visual>
 
-      <sensor name="hokuyo" type="ray">
+      <sensor name="hokuyo" type="gpu_ray">
         <always_on>true</always_on>
         <visualize>true</visualize>
         <pose>0.102 0 0.216375 0 0 0</pose>
@@ -86,7 +86,7 @@
               <samples>666</samples>
               <resolution>1.000000</resolution>
               <min_angle>-2.090000</min_angle>
-              <max_angle>2.090000</max_angle>
+              <max_angle>2.09000</max_angle>
             </horizontal>
           </scan>
           <range>
@@ -97,7 +97,7 @@
           <noise>
             <type>gaussian</type>
             <mean>0.0</mean>
-            <stddev>0.03</stddev>
+            <stddev>0.01</stddev>
           </noise>
         </ray>
         <plugin name="hokuyo_laserscan" filename="libgazebo_ros_ray_sensor.so">
@@ -204,28 +204,31 @@
             <length>0.0315</length>
           </cylinder>
         </geometry>
-        <surface>
-          <!-- This friction pamareter don't contain reliable data!! -->
-          <friction>
-            <ode>
-              <mu>100000.0</mu>
-              <mu2>100000.0</mu2>
-              <fdir1>0 0 0</fdir1>
-              <slip1>0.0</slip1>
-              <slip2>0.0</slip2>
-            </ode>
-          </friction>
-          <contact>
-            <ode>
-              <soft_cfm>0</soft_cfm>
-              <soft_erp>0.2</soft_erp>
-              <kp>1e+5</kp>
-              <kd>1</kd>
-              <max_vel>0.01</max_vel>
-              <min_depth>0.001</min_depth>
-            </ode>
-          </contact>
-        </surface>
+           <surface>
+        <friction>
+          <ode>
+            <mu>1.01</mu>
+            <mu2>1.01</mu2>
+            <fdir1>0 0 1</fdir1>
+            <slip1>0</slip1>
+            <slip2>0</slip2>
+          </ode>
+        </friction>
+        <bounce>
+          <restitution_coefficient>0.0</restitution_coefficient>
+          <threshold>100000.0</threshold>
+        </bounce>
+        <contact>
+          <ode>
+            <soft_cfm>0.0</soft_cfm>
+            <soft_erp>0.2</soft_erp>
+            <kp>100000.0</kp>
+            <kd>1.0</kd>
+            <max_vel>100.0</max_vel>
+            <min_depth>0.001</min_depth>
+          </ode>
+        </contact>
+      </surface>
       </collision>
 
       <visual name="wheel_left_visual">
@@ -262,28 +265,31 @@
             <length>0.0315</length>
           </cylinder>
         </geometry>
-        <surface>
-          <!-- This friction pamareter don't contain reliable data!! -->
-          <friction>
-            <ode>
-              <mu>100000.0</mu>
-              <mu2>100000.0</mu2>
-              <fdir1>0 0 0</fdir1>
-              <slip1>0.0</slip1>
-              <slip2>0.0</slip2>
-            </ode>
-          </friction>
-          <contact>
-            <ode>
-              <soft_cfm>0</soft_cfm>
-              <soft_erp>0.2</soft_erp>
-              <kp>1e+5</kp>
-              <kd>1</kd>
-              <max_vel>0.01</max_vel>
-              <min_depth>0.001</min_depth>
-            </ode>
-          </contact>
-        </surface>
+            <surface>
+        <friction>
+          <ode>
+            <mu>1.01</mu>
+            <mu2>1.01</mu2>
+            <fdir1>0 0 1</fdir1>
+            <slip1>0</slip1>
+            <slip2>0</slip2>
+          </ode>
+        </friction>
+        <bounce>
+          <restitution_coefficient>0.0</restitution_coefficient>
+          <threshold>100000.0</threshold>
+        </bounce>
+        <contact>
+          <ode>
+            <soft_cfm>0.0</soft_cfm>
+            <soft_erp>0.2</soft_erp>
+            <kp>100000.0</kp>
+            <kd>1.0</kd>
+            <max_vel>100.0</max_vel>
+            <min_depth>0.001</min_depth>
+          </ode>
+        </contact>
+      </surface>
       </collision>
 
       <visual name="wheel_right_visual">
@@ -316,28 +322,31 @@
             <radius>0.04</radius>
           </sphere>
         </geometry>
-      <surface>
-          <!-- This friction pamareter don't contain reliable data!! -->
-          <friction>
-            <ode>
-              <mu>100000.0</mu>
-              <mu2>100000.0</mu2>
-              <fdir1>0 0 0</fdir1>
-              <slip1>0.0</slip1>
-              <slip2>0.0</slip2>
-            </ode>
-          </friction>
-          <contact>
-            <ode>
-              <soft_cfm>0</soft_cfm>
-              <soft_erp>0.2</soft_erp>
-              <kp>1e+5</kp>
-              <kd>1</kd>
-              <max_vel>0.01</max_vel>
-              <min_depth>0.001</min_depth>
-            </ode>
-          </contact>
-        </surface>
+         <surface>
+        <friction>
+          <ode>
+            <mu>1.01</mu>
+            <mu2>1.01</mu2>
+            <fdir1>0 0 1</fdir1>
+            <slip1>0</slip1>
+            <slip2>0</slip2>
+          </ode>
+        </friction>
+        <bounce>
+          <restitution_coefficient>0.0</restitution_coefficient>
+          <threshold>100000.0</threshold>
+        </bounce>
+        <contact>
+          <ode>
+            <soft_cfm>0.0</soft_cfm>
+            <soft_erp>0.2</soft_erp>
+            <kp>100000.0</kp>
+            <kd>1.0</kd>
+            <max_vel>100.0</max_vel>
+            <min_depth>0.001</min_depth>
+          </ode>
+        </contact>
+      </surface>
       </collision>
     </link>
 
