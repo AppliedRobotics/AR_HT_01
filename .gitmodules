@@ -1,0 +1,14 @@
+[submodule "hls_lfcd_lds_driver"]
+	path = hls_lfcd_lds_driver
+	url = https://github.com/ROBOTIS-GIT/hls_lfcd_lds_driver.git
+	branch = foxy-devel
+[submodule "tc3-ros-package"]
+	path = tc3-ros-package
+	url = https://github.com/AppliedRobotics/tc3-ros-package.git
+[submodule "urg_node"]
+	path = urg_node
+	url = https://github.com/ros-drivers/urg_node.git
+	branch = ros2-devel
+[submodule "urg_node_msgs"]
+	path = urg_node_msgs
+	url = https://github.com/ros-drivers/urg_node_msgs.git
