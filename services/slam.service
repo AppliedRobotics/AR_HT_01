@@ -1,0 +1,11 @@
+[Unit]
+Description=launch lidar and motors
+After=network.target
+[Service]
+Environment=HOME="root"
+#Environment="ROS_DOMAIN_ID=5"
+ExecStart=bash -c ". /opt/ros/humble/setup.bash; ros2 launch AR_HT_navigation full.launch.py slam:=True"
+#ExecStart=bash -c ". /home/nuc/run_bringup.sh"
+[Install]
+WantedBy=default.target
+User=nuc
