@@ -27,6 +27,7 @@ setup(
     entry_points={
         'console_scripts': [
         'api = AR_HT_api.ar_api:main',
+        'manip_api = AR_HT_api.manip_api:main',
         'get_visual = AR_HT_api.visualization:main'
         ],
     },

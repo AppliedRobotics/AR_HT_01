@@ -3,7 +3,7 @@ urg_node:
     angle_max: 2.7
     angle_min: -2.7
     ip_port: 10940
-    serial_port: "/dev/ttyACM0"
+    serial_port: "/dev/ttyACM1"
     serial_baud: 115200
     laser_frame_id: "scan"
     calibrate_time: false

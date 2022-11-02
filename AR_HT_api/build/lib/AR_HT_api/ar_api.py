@@ -12,7 +12,6 @@ from nav_msgs.msg import Path, Odometry
 from rclpy.qos import ReliabilityPolicy, QoSProfile
 import json
 from std_msgs.msg import Bool, Float32
-from geometry_msgs.msg import Twist
 from time import sleep, time
 class AR_HT_api(Node):
     def __init__(self):
@@ -25,8 +24,6 @@ class AR_HT_api(Node):
         self.subscription_6 = self.create_subscription(Path,'plan',self.plan_callback,10)
         self.subscription_7 = self.create_subscription(JointState,'joint_states',self.js_callback,10)
         self.subscription_8 = self.create_subscription(Float32,'battery_voltage',self.battery_callback,10)
-        self.subscription_9 = self.create_subscription(LaserScan,'scan',self.scan_callback_parking,1)
-        self.cmd_vel_pub = self.create_publisher(Twist, "/cmd_vel", 4)
         self.create_timer(3.0, self.timer_callback)
         self.tfBuffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tfBuffer, self)
@@ -44,36 +41,23 @@ class AR_HT_api(Node):
         self.plan_flag = False
         self.js_flag = False
         self.battery_voltage = 0.0
-        self.parking_flag = False
-        self.y_target = 0.62
-        self.x_target = 0.08
-        self.kx = 3.0
-        self.ky = 3.0
-        self.kz = 10.0
-
     def battery_callback(self, data):
         self.battery_voltage = data.data
-
     def js_callback(self, data):
         self.js_flag = True
-
     def map_callback(self, data):
         self.map_ = data
-
     def keepout_callback(self, data):
         self.keepout_map = data
-
     def timer_callback(self):
         self.js_flag = False
         self.battery_voltage = False
         self.scan_flag_2 = False
         self.scan_flag_1 = False
         self.plan_flag = False
-
     def tf_callback(self, tf):
         if tf.transforms[0].child_frame_id == 'base_link':
             self.tf_time = tf.transforms[0].header.stamp
-    
     def scan_callback_1(self, data):
         increment = int(len(data.ranges)/len(self.scan_buffer_1))                
         j = 0
@@ -82,7 +66,6 @@ class AR_HT_api(Node):
             self.scan_angles_1[j] = i*data.angle_increment + data.angle_min
             j+=1
         self.scan_flag_1 = True
-    
     def scan_callback_2(self, data):
         increment = int(len(data.ranges)/len(self.scan_buffer_2))                
         j = 0
@@ -91,14 +74,12 @@ class AR_HT_api(Node):
             self.scan_angles_2[j] = i*data.angle_increment + data.angle_min
             j+=1
         self.scan_flag_2 = True
-    
     def plan_callback(self, data):
         self.plan = []
-        for pose in self.plan.poses:
+        for pose in plan.poses:
             x = pose.pose.position.x 
             y = pose.pose.position.y
             self.plan.append([x,y])
-    
     def get_map(self):
         if self.keepout_map is not None:
             map_loc = self.keepout_map 
@@ -121,7 +102,6 @@ class AR_HT_api(Node):
                 'map_width': map_loc.info.width,
                 'map_height': map_loc.info.height}
         return answr
-    
     def get_scans(self):
         if self.scan_flag_1 == True and self.scan_flag_2 == True:
             answr = {'scan_1_ranges': self.scan_buffer_1, 'scan_1_angles': self.scan_angles_1,
@@ -129,7 +109,6 @@ class AR_HT_api(Node):
             return answr  
         else:
             return False
-    
     def get_robot_pose(self):
         try:
             trans = self.tfBuffer.lookup_transform('map', 'base_link', self.tf_time)
@@ -142,14 +121,12 @@ class AR_HT_api(Node):
             return answr
         except Exception as e: 
             return False
-    
     def get_plan(self):
         if self.plan_flag == True:
             answr = {'plan': self.plan}
             return answr
         else:
             return False
-    
     def get_status(self):
         if self.battery_voltage == 0:
             battery = False
@@ -174,63 +151,20 @@ class AR_HT_api(Node):
             sleep(sleep_time)
             return True
         return False
-    
-    def check_constrain(self, err, constr):
-        if abs(err) > constr:
-            if err > 0:
-                return constr
-            else:
-                return -1*constr
-        else:
-            return err
-
-    def parking(self):
-        self.parking_flag = True
-        while self.parking_flag == True:
-            sleep(0.1)
-        return True
-
-    def scan_callback_parking(self, data):
-        # print(data.ranges[363])
-        # print(data.ranges[320])
-        # print(data.ranges[406])
-        if self.parking_flag is True:
-            print(len(data.ranges))
-            z_err = self.kz*(data.ranges[353] - data.ranges[373])
-            print("ranges: ", data.ranges[353], data.ranges[373])
-            print(z_err)
-            x_err = self.kx*(data.ranges[363]- 0.12)
-            x_err = self.check_constrain(x_err, 0.1)
-            z_err = self.check_constrain(z_err, 0.5)
-            
-            msg = Twist()
-            msg.linear.x = x_err
-            # msg.linear.y = y_err
-            msg.angular.z = z_err
-            self.cmd_vel_pub.publish(msg)
-            # if(abs(x_err) < 0.06):
-                # x_err = 0
-            if(abs(x_err) < 0.02  and abs(z_err) < 0.008):
-                msg.linear.x = 0.0
-                msg.linear.y = 0.0
-                msg.angular.z = 0.0
-                self.cmd_vel_pub.publish(msg)
-                self.parking_flag = False
-                print("parked")         
 
   
 def main(args=None):
+    rclpy.init(args=args)
     api = AR_HT_api()
-    rclpy.init(args=None)
     thread = threading.Thread(target=rclpy.spin, args=(api, ), daemon=True)
     thread.start()
     rate = api.create_rate(2)
     # future = action_client.send_goal(-1.85,-1.12,5.1)
     while rclpy.ok():
         try:
-            # api.get_map()
-            # for i in range(0,1):
-                # print()
+            api.get_map()
+            for i in range(0,1):
+                print()
             rate.sleep()
         except KeyboardInterrupt:
             rclpy.shutdown()

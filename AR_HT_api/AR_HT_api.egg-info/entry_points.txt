@@ -1,0 +1,4 @@
+[console_scripts]
+api = AR_HT_api.ar_api:main
+get_visual = AR_HT_api.visualization:main
+

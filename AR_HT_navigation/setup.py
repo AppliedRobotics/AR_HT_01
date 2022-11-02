@@ -27,6 +27,7 @@ setup(
     entry_points={
         'console_scripts': [
         'action = AR_HT_navigation.action:main',
+        'action_nav = AR_HT_navigation.action_nav:main',
         ],
     },
 )
